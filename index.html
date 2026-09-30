@@ -732,7 +732,19 @@ select { max-width: 100%; }
   .title p { display: none; }
   .header-right { flex: 1 1 auto; min-width: 0px; margin-left: auto; padding-left: var(--hdr-sep); gap: var(--hdr-gap); justify-content: flex-end; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .header-right::-webkit-scrollbar { display: none; }
-  .header-right > * { flex: 0 0 auto; }
+.header-right > * { flex: 0 0 auto; }
+
+/* ===== 顶栏下拉（主题 / 语音）===== */
+.hdr-pop-wrap { position: relative; flex: 0 0 auto; }
+.hdr-pop { position: fixed; z-index: 6000; display: none; min-width: 240px; max-width: min(88vw, 340px); background: var(--ink-panel, #fff); backdrop-filter: blur(10px); border: 1px solid var(--ink-line, rgba(0,0,0,.14)); border-radius: 12px; box-shadow: 0 10px 34px rgba(0,0,0,.22); padding: 10px; }
+.hdr-pop.open { display: block; }
+.hdr-pop .form-group { margin-bottom: 8px; }
+.hdr-pop .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--ink-text); }
+.hdr-pop .form-group select { width: 100%; padding: 6px 8px; border: 1px solid var(--ink-line, #ddd); border-radius: 8px; background: var(--ink-panel, #fff); color: var(--ink-text); font-size: 13px; }
+.hdr-pop .ink-pop-title { font-size: 12px; font-weight: 700; color: var(--ink-muted); margin-bottom: 6px; }
+.hdr-pop .ink-switcher { grid-template-columns: repeat(2, 1fr); margin-top: 0; }
+#stockBtn { position: relative; }
+
   .key-pool-badge, .task-counter, .connection-badge { white-space: nowrap; }
   .lib-btn, .btn-settings { white-space: nowrap; }
   .chat-container { padding: 12px 12px 6px; margin: 10px auto 0px; width: calc(100% - 20px); }
@@ -871,19 +883,35 @@ select { max-width: 100%; }
 }</style>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agnes AI 助手</title>
+    <title>免费影音工具箱</title>
     
 </head>
 <body style="--ink-header: rgba(252,250,244,.90); --ink-panel: rgba(252,250,244,.84); --ink-line: rgba(60,52,40,.35); --ink-wash: rgba(60,52,40,.09); --ink-soft: rgba(60,52,40,.05); --ink-shadow: rgba(60,52,40,.12); --ink-hl: rgba(255,255,255,.60); --ink-text: #2E2A24; --ink-muted: #8B8578; --ink-accent: #4A4034; --ink-accent-soft: rgba(74,64,52,.08); --ink-accent-hover: rgba(74,64,52,.16); --ink-bub-u: #F0EDE3; --ink-bub-a: rgba(255,253,248,.94); --ink-grain: 0.05; --ink-m1: rgba(120,110,92,.16); --ink-m2: rgba(90,82,66,.22); background: radial-gradient(1200px 500px at 85% -10%, rgba(196, 181, 150, 0.28), transparent 60%), radial-gradient(900px 420px at -5% 22%, rgba(178, 168, 146, 0.18), transparent 55%), linear-gradient(165deg, rgb(247, 244, 236) 0%, rgb(251, 249, 243) 50%, rgb(242, 238, 227) 100%);">
     <div class="header">
-        <div class="logo-area" title="Agnes AI 助手 · 对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布">
+        <div class="logo-area" title="免费影音工具箱 · 对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布">
             <div class="logo">🤖</div>
-            <div class="title"><h1 data-full-text="Agnes AI 助手">Agnes AI 助手</h1><p>对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布</p></div>
+            <div class="title"><h1 data-full-text="免费影音工具箱">免费影音工具箱</h1><p>对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布</p></div>
         </div>
         <div class="header-right">
             <div class="key-pool-badge" id="keyPoolBadge" title="API Key 池状态">🔑 可用 0 · 冷却 0</div>
             <div class="task-counter" id="taskCounter">⏳ 0 个任务进行中</div>
             <div class="connection-badge disconnected" id="connectionBadge"><div class="status-dot"></div><span id="statusText">未连接</span></div>
+            <div class="hdr-pop-wrap">
+                <button class="btn-settings" id="themeBtn" title="切换主题">🎨<span class="st-text"> 主题</span></button>
+                <div class="hdr-pop" id="themePop"><div class="ink-pop-title">选择主题</div><div class="ink-switcher" id="inkSwitcher"></div></div>
+            </div>
+            <div class="hdr-pop-wrap">
+                <button class="btn-settings" id="voiceBtn" title="语音朗读设置">🔊<span class="st-text"> 语音</span></button>
+                <div class="hdr-pop" id="voicePop">
+                    <div class="form-group"><label>🗣 朗读声音</label><select id="ttsVoice"><option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·中文)</option><option value="zh-CN-XiaoyiNeural">晓伊 (女声·中文)</option><option value="zh-CN-YunjianNeural">云健 (男声·中文)</option><option value="zh-CN-YunxiNeural">云希 (男声·中文)</option><option value="zh-CN-YunyangNeural">云扬 (男声·中文)</option><option value="zh-CN-YunfengNeural">云枫 (男声·中文)</option><option value="zh-CN-YunhaoNeural">云皓 (男声·中文)</option><option value="zh-CN-XiaochenNeural">晓辰 (女声·中文)</option><option value="zh-CN-XiaohanNeural">晓涵 (女声·中文)</option><option value="zh-CN-XiaomoNeural">晓墨 (女声·中文)</option><option value="zh-CN-XiaoshuangNeural">晓双 (女声·中文)</option><option value="zh-CN-XiaoweiNeural">晓薇 (女声·中文)</option><option value="zh-CN-XiaoxuanNeural">晓萱 (女声·中文)</option><option value="zh-CN-YunzeNeural">云泽 (男声·中文)</option><option value="en-US-AriaNeural">Aria (女声·英文)</option><option value="en-US-JennyNeural">Jenny (女声·英文)</option><option value="en-US-GuyNeural">Guy (男声·英文)</option><option value="en-US-DavisNeural">Davis (男声·英文)</option><option value="en-US-AmberNeural">Amber (女声·英文)</option><option value="en-US-AnaNeural">Ana (女声·英文)</option><option value="en-GB-SoniaNeural">Sonia (女声·英文)</option><option value="en-GB-RyanNeural">Ryan (男声·英文)</option><option value="ja-JP-NanamiNeural">Nanami (女声·日文)</option><option value="ja-JP-KeitaNeural">Keita (男声·日文)</option><option value="ko-KR-SunHiNeural">SunHi (女声·韩文)</option><option value="ko-KR-InJoonNeural">InJoon (男声·韩文)</option></select></div>
+                    <div class="form-group"><label>🎚 语速 (<span id="ttsRateValue">0</span>%)</label><input type="range" id="ttsRate" min="-50" max="100" value="0" step="5" style="width:100%;"></div>
+                    <div class="form-group"><label>🎚 音调 (<span id="ttsPitchValue">0</span>%)</label><input type="range" id="ttsPitch" min="-50" max="50" value="0" step="5" style="width:100%;"></div>
+                    <div class="form-group" style="margin-bottom:0;"><button type="button" class="msg-action-btn" id="voiceSaveBtn">💾 保存语音设置</button></div>
+                </div>
+            </div>
+            <div class="hdr-pop-wrap">
+                <button class="btn-settings" id="stockBtn" title="免费素材库（Pexels / Pixabay）">🎞️<span class="st-text"> 素材</span></button>
+            </div>
             <button class="lib-btn" id="mediaLibBtn" aria-label="素材">📁<span class="lib-count" id="mediaLibCount">0</span></button>
             <button class="btn-settings" id="settingsBtn">⚙️<span class="st-text"> 设置</span></button>
         </div>
@@ -892,7 +920,7 @@ select { max-width: 100%; }
         <button class="lightbox-close" id="lightboxClose">×</button>
         <div id="lightboxBody"></div>
     </div>
-    <div class="chat-container"><div class="messages" id="messages"><div class="welcome" id="welcomeMsg">💬 欢迎使用 Agnes AI！点击右上角⚙️设置API Key后即可开始</div></div></div>
+    <div class="chat-container"><div class="messages" id="messages"><div class="welcome" id="welcomeMsg">💬 欢迎使用免费影音工具箱！点击右上角⚙️设置API Key后即可开始</div></div></div>
 <div id="canvasSection">
 <div class="canvas-toolbar">
 <button class="tb-btn">⬅️ 退出</button>
@@ -992,8 +1020,9 @@ select { max-width: 100%; }
                     <option value="video_keyframe">🎬 首尾帧生视频</option>
                     <option value="drama">🎬 生成短剧</option>
                     <option value="canvas">🎨 画布</option>
+                    <option value="film">🎬 一键成片</option>
                 </select>
-                <select id="modelSelect"><option value="agnes-3.0-flash">Agnes 3.0 Flash (免费)</option><option value="agnes-2.5-flash">Agnes 2.5 Flash (免费)</option></select>
+                <select id="modelSelect"><option value="agnes-3.0-flash">Agnes 3.0 Flash (免费)</option><option value="agnes-2.5-flash">Agnes 2.5 Flash (免费)</option><option value="sensenova-6.7-flash-lite">SenseNova 6.7 Flash Lite (免费)</option><option value="sensenova-6.8-flash-lite">SenseNova 6.8 Flash Lite (免费)</option><option value="deepseek-v4-flash">DeepSeek V4 Flash (免费·商汤)</option></select>
                 <button type="button" class="panel-clear" id="inputClearBtn" title="一键清空输入框内容、附件文件和图片">🗑️<span class="pc-text"> 清空</span></button>
             </div>
         </div>
@@ -1022,6 +1051,13 @@ select { max-width: 100%; }
             <span class="opt-pair"><label>文本模型:</label><select id="dramaTextModel"><option value="agnes-3.0-flash">Agnes 3.0 Flash (免费)</option><option value="agnes-2.5-flash">Agnes 2.5 Flash (免费)</option></select></span>
             <span class="opt-pair"><label>图片模型:</label><select id="dramaImageModel"><option value="agnes-image-2.5-flash">Agnes Image 2.5 Flash (免费)</option><option value="agnes-image-2.1-flash">Agnes Image 2.1 Flash (免费)</option></select></span>
             <label class="drama-parallel-label" title="开启后按「并发线程数」批量同时生图/生视频"><input type="checkbox" id="dramaParallel" checked=""> 🧵 多线程批量生成 <span id="dramaParallelInfo" style="font-size:11px;color:#888;">(并发 1 · 自动)</span></label>
+        <div class="gen-options" id="filmOptions">
+            <span class="opt-pair"><label>素材:</label><select id="filmSource"><option value="stock">实拍素材(Pexels/Pixabay)</option><option value="ai">AI 生成画面</option><option value="mix" selected="">混合（先素材后AI）</option></select></span>
+            <span class="opt-pair"><label>画幅:</label><select id="filmRatio"><option value="16x9" selected="">16:9 横屏</option><option value="9x16">9:16 竖屏</option><option value="1x1">1:1 方形</option></select></span>
+            <span class="opt-pair"><label>时长:</label><select id="filmTarget"><option value="15">约15秒</option><option value="30" selected="">约30秒</option><option value="60">约60秒</option></select></span>
+            <span class="opt-pair"><label>配音:</label><select id="filmVoice"><option value="on" selected="">开启（Edge TTS）</option><option value="off">关闭</option></select></span>
+            <span class="opt-pair"><label>字幕:</label><select id="filmSubtitle"><option value="on" selected="">显示</option><option value="off">隐藏</option></select></span>
+        </div>
         </div>
             <button type="button" class="panel-toggle" id="panelToggleBtn" title="收起 / 展开功能面板"><span class="pt-arrow">▲</span></button>
             <div class="attachment-previews hidden" id="attachmentPreviews"></div>
@@ -1060,22 +1096,49 @@ select { max-width: 100%; }
             <div class="form-group"><label>🔑 API Key</label><input type="password" id="apiKeyInput" placeholder="输入您的 API Key..." style="display: none;"><textarea id="apiKeysInput" placeholder="支持批量粘贴多个 API Key：
 每行一个，或用逗号、空格、分号分隔"></textarea><div class="api-key-actions"><button type="button" class="msg-action-btn" id="importApiKeysBtn">📁 导入TXT</button><button type="button" class="msg-action-btn" id="testAllApiKeysBtn">🧪 测试全部</button><button type="button" class="msg-action-btn" id="clearApiKeysBtn">🗑️ 清空</button></div><div class="api-key-settings"><label style="display:inline-flex;align-items:center;gap:5px;">🔁 自动检测<input type="checkbox" id="apiKeyAutoDetectChk" style="margin:0;" title="定时探测空闲 Key：限流/失效自动冷却，恢复后自动解冻，调用时只用可用 Key"></label><label title="自动检测的轮询间隔">🔁间隔(秒)<input type="number" id="apiKeyDetectIntervalInput" min="5" max="3600" step="5" value="30" style="width:56px;"></label><label>⏱️ 冷却时间(秒)<input type="number" id="apiKeyCooldownInput" min="0" max="3600" step="10" value="60"></label><label>🧵 并发线程<select id="apiKeyParallelMode" style="padding:4px 6px;border:1px solid #E8E8E8;border-radius:6px;font-size:11px;background:#fff;color:#333;"><option value="auto">自动·跟随可用Key</option><option value="manual">手动指定</option></select><input type="number" id="apiKeyParallelInput" min="1" max="1" step="1" value="1" readonly="" style="background: rgb(245, 245, 245); color: rgb(136, 136, 136);"></label><span id="apiKeyCapHint" style="font-size:11px;color:#4D6BFE;"></span><button type="button" class="msg-action-btn" id="applyApiKeySettingsBtn">✅ 应用</button></div><div id="apiKeyPoolStatus" class="api-key-status">未配置 API Key</div><div style="font-size:11px;color:#999;margin-top:6px;">💾 点击保存会写入配置文件</div></div>
             <div class="form-group"><label>🌐 Base URL</label><input type="text" id="baseUrlInput" value="https://api.agnes-ai.cn/v1"></div>
-            <div class="form-group"><label>🔊 Edge TTS 语音</label><select id="ttsVoice"><option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·中文)</option><option value="zh-CN-XiaoyiNeural">晓伊 (女声·中文)</option><option value="zh-CN-YunjianNeural">云健 (男声·中文)</option><option value="zh-CN-YunxiNeural">云希 (男声·中文)</option><option value="zh-CN-YunyangNeural">云扬 (男声·中文)</option><option value="zh-CN-YunfengNeural">云枫 (男声·中文)</option><option value="zh-CN-YunhaoNeural">云皓 (男声·中文)</option><option value="zh-CN-XiaochenNeural">晓辰 (女声·中文)</option><option value="zh-CN-XiaohanNeural">晓涵 (女声·中文)</option><option value="zh-CN-XiaomoNeural">晓墨 (女声·中文)</option><option value="zh-CN-XiaoshuangNeural">晓双 (女声·中文)</option><option value="zh-CN-XiaoweiNeural">晓薇 (女声·中文)</option><option value="zh-CN-XiaoxuanNeural">晓萱 (女声·中文)</option><option value="zh-CN-YunzeNeural">云泽 (男声·中文)</option><option value="en-US-AriaNeural">Aria (女声·英文)</option><option value="en-US-JennyNeural">Jenny (女声·英文)</option><option value="en-US-GuyNeural">Guy (男声·英文)</option><option value="en-US-DavisNeural">Davis (男声·英文)</option><option value="en-US-AmberNeural">Amber (女声·英文)</option><option value="en-US-AnaNeural">Ana (女声·英文)</option><option value="en-GB-SoniaNeural">Sonia (女声·英文)</option><option value="en-GB-RyanNeural">Ryan (男声·英文)</option><option value="ja-JP-NanamiNeural">Nanami (女声·日文)</option><option value="ja-JP-KeitaNeural">Keita (男声·日文)</option><option value="ko-KR-SunHiNeural">SunHi (女声·韩文)</option><option value="ko-KR-InJoonNeural">InJoon (男声·韩文)</option></select></div>
-            <div class="form-group"><label>🔊 语速 (<span id="ttsRateValue">0</span>%)</label><input type="range" id="ttsRate" min="-50" max="100" value="0" step="5" style="width:100%;"></div>
-            <div class="form-group"><label>🔊 音调 (<span id="ttsPitchValue">0</span>%)</label><input type="range" id="ttsPitch" min="-50" max="50" value="0" step="5" style="width:100%;"></div>
-            <div class="form-group"><label>🖋 水墨主题</label><div class="ink-switcher" id="inkSwitcher"><button type="button" class="ink-swatch active" data-name="宣纸墨韵" title="水墨主题：宣纸墨韵"><span class="ink-chip" style="background:radial-gradient(1200px 500px at 85% -10%, rgba(196,181,150,.28), transparent 60%), radial-gradient(900px 420px at -5% 22%, rgba(178,168,146,.18), transparent 55%), linear-gradient(165deg,#F7F4EC 0%,#FBF9F3 50%,#F2EEE3 100%)"><i style="background:#4A4034"></i></span><span class="ink-name">宣纸墨韵</span></button><button type="button" class="ink-swatch" data-name="暮夜墨染" title="水墨主题：暮夜墨染"><span class="ink-chip" style="background:radial-gradient(700px 320px at 78% 4%, rgba(240,235,214,.12), transparent 55%), radial-gradient(1100px 500px at 10% 108%, rgba(70,95,132,.22), transparent 60%), linear-gradient(168deg,#1D2129 0%,#141821 55%,#0E1116 100%)"><i style="background:#8FB3D9"></i></span><span class="ink-name">暮夜墨染</span></button><button type="button" class="ink-swatch" data-name="青绿山水" title="水墨主题：青绿山水"><span class="ink-chip" style="background:radial-gradient(820px 380px at 88% 0%, rgba(220,238,220,.55), transparent 58%), radial-gradient(1150px 520px at 6% 106%, rgba(122,172,142,.24), transparent 62%), linear-gradient(165deg,#E7F1E6 0%,#F5FAF3 50%,#E2EFE1 100%)"><i style="background:#2C5F4F"></i></span><span class="ink-name">青绿山水</span></button><button type="button" class="ink-swatch" data-name="朱砂点染" title="水墨主题：朱砂点染"><span class="ink-chip" style="background:radial-gradient(780px 350px at 82% 2%, rgba(242,182,152,.30), transparent 58%), radial-gradient(1050px 480px at 4% 106%, rgba(180,94,66,.18), transparent 60%), linear-gradient(165deg,#F9EEE8 0%,#FDF8F4 50%,#F4E6DD 100%)"><i style="background:#A63A2B"></i></span><span class="ink-name">朱砂点染</span></button><button type="button" class="ink-swatch" data-name="烟雨江南" title="水墨主题：烟雨江南"><span class="ink-chip" style="background:radial-gradient(840px 380px at 80% 0%, rgba(214,226,238,.55), transparent 58%), radial-gradient(1150px 500px at 8% 106%, rgba(110,142,172,.20), transparent 62%), linear-gradient(168deg,#E8EEF3 0%,#F6F8FA 50%,#E4EBF2 100%)"><i style="background:#3A5A78"></i></span><span class="ink-name">烟雨江南</span></button><button type="button" class="ink-swatch" data-name="雪霁寒林" title="水墨主题：雪霁寒林"><span class="ink-chip" style="background:radial-gradient(800px 360px at 84% 0%, rgba(236,241,247,.65), transparent 58%), radial-gradient(1100px 500px at 6% 106%, rgba(150,164,180,.18), transparent 60%), linear-gradient(165deg,#F0F2F6 0%,#FAFBFC 50%,#ECF0F4 100%)"><i style="background:#3C4653"></i></span><span class="ink-name">雪霁寒林</span></button></div><div style="font-size:11px;color:#999;margin-top:6px;">画框、气泡、文字强调色随主题联动；页面背景同步切换</div></div>
+            <div class="form-group"><label>🆓 商汤 SenseNova API Key（免费模型专用，留空则不启用）</label><input type="password" id="svKeyInput" placeholder="粘贴 platform.sensenova.cn 的 API Key..."></div>
             <div class="modal-buttons"><button class="btn-cancel" id="cancelBtn">取消</button><button class="btn-save" id="saveBtn">💾 保存并连接</button></div>
         </div>
     </div>
     <input type="file" id="fileInput" multiple="" accept="image/*,video/*,.pdf,.doc,.docx,.txt,.md,.html,.csv">
     <div class="toast-container" id="toastContainer"></div>
+    <style>
+        /* ===== 顶栏下拉（主题/语音）与素材库、一键成片 ===== */
+        .hdr-pop { color: var(--ink-text); }
+        .hdr-pop select, .hdr-pop input { color: var(--ink-text); background: var(--ink-panel,#fff); }
+        .msg-action-btn { font-family: inherit; }
+        .stock-overlay { position: fixed; inset: 0; z-index: 7000; display: none; background: rgba(0,0,0,.55); backdrop-filter: blur(4px); }
+        .stock-overlay.open { display: flex; align-items: center; justify-content: center; }
+        .stock-panel { width: min(1060px, 96vw); height: min(760px, 92vh); background: var(--ink-panel,#fff); color: var(--ink-text); border: 1px solid var(--ink-line,rgba(0,0,0,.14)); border-radius: 16px; box-shadow: 0 24px 70px rgba(0,0,0,.4); display: flex; flex-direction: column; overflow: hidden; }
+        .stock-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--ink-line,rgba(0,0,0,.12)); font-weight: 700; flex: 0 0 auto; }
+        .stock-header button { width: 30px; height: 30px; border: 0; border-radius: 8px; background: var(--ink-soft,#f2f2f2); color: var(--ink-text); cursor: pointer; font-size: 15px; }
+        .stock-toolbar { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; align-items: center; flex: 0 0 auto; }
+        .stock-toolbar input[type=text] { flex: 1 1 240px; min-width: 180px; padding: 9px 12px; border: 1px solid var(--ink-line,#ddd); border-radius: 10px; background: var(--ink-bg,#fafafa); color: var(--ink-text); font-size: 14px; }
+        .stock-toolbar select { padding: 9px 10px; border: 1px solid var(--ink-line,#ddd); border-radius: 10px; background: var(--ink-panel,#fff); color: var(--ink-text); font-size: 13px; }
+        .stock-toolbar button { padding: 9px 16px; border: 0; border-radius: 10px; background: var(--ink-accent,#4D6BFE); color: #fff; font-weight: 700; cursor: pointer; font-size: 13px; }
+        .stock-status { padding: 0 16px 8px; font-size: 12px; color: var(--ink-muted,#888); flex: 0 0 auto; min-height: 16px; }
+        .stock-grid { flex: 1 1 auto; overflow-y: auto; padding: 0 16px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; align-content: start; }
+        .stock-card { border: 1px solid var(--ink-line,rgba(0,0,0,.1)); border-radius: 12px; overflow: hidden; background: var(--ink-wash,#f7f7f7); display: flex; flex-direction: column; }
+        .stock-card .sk { position: relative; width: 100%; aspect-ratio: 16/10; background: var(--ink-soft,#eee); overflow: hidden; }
+        .stock-card .sk img, .stock-card .sk video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .stock-card .meta { padding: 7px 9px; font-size: 11px; color: var(--ink-muted,#888); line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .stock-card .acts { display: flex; gap: 6px; padding: 0 8px 9px; }
+        .stock-card .acts button, .stock-card .acts a { flex: 1; text-align: center; font-size: 11px; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--ink-line,#ddd); background: var(--ink-panel,#fff); color: var(--ink-text); cursor: pointer; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .stock-card .acts .dl { background: var(--ink-accent,#4D6BFE); border-color: transparent; color: #fff; }
+        .film-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .film-actions a.msg-action-btn { text-decoration: none; }
+        .film-meta { font-size: 11px; color: var(--ink-muted,#888); }
+        .film-script { margin-top: 8px; font-size: 12px; color: var(--ink-muted,#888); border-top: 1px dashed var(--ink-line,#ddd); padding-top: 6px; max-height: 160px; overflow-y: auto; }
+        @media (max-width: 640px) { .stock-grid { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); } .stock-panel { width: 98vw; height: 94vh; } }
+        </style>
+
     <script>
         const DEFAULT_API_BASE = 'https://api.agnes-ai.cn/v1';
         /* ✅ 已下线（官方已移除/停止服务）的模型，一律不显示 */
         const RETIRED_MODELS = ['agnes-2.0-flash','agnes-image-2.0-flash','agnes-image-1.0','agnes-video-v1.0','agnes-1.0-flash'];
         /* ✅ 只保留官方在用的免费模型，第一项 = 最新免费推荐模型（默认选中） */
         const MODELS = {
-            chat: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }],
+            chat: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.7-flash-lite', label: 'SenseNova 6.7 Flash Lite (免费)', sv: 1 }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (免费)', sv: 1 }, { value: 'deepseek-v4-flash', label: 'DeepSeek V4 Flash (免费·商汤)', sv: 1 }],
             image: [{ value: 'agnes-image-2.5-flash', label: 'Agnes Image 2.5 Flash (免费)' }, { value: 'agnes-image-2.1-flash', label: 'Agnes Image 2.1 Flash (免费)' }],
             edit: [{ value: 'agnes-image-2.5-flash', label: 'Agnes Image 2.5 Flash (免费)' }, { value: 'agnes-image-2.1-flash', label: 'Agnes Image 2.1 Flash (免费)' }],
             video_text: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
@@ -1083,7 +1146,8 @@ select { max-width: 100%; }
             video_multi: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
             video_keyframe: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
             drama: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
-            canvas: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }]
+            canvas: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }],
+            film: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.7-flash-lite', label: 'SenseNova 6.7 Flash Lite (免费)', sv: 1 }]
         };
         /* ✅ 各模型官方支持的最大图片上传数量（调用时按模型实际能力截取） */
         const MODEL_MAX_IMAGES = {
@@ -1178,13 +1242,13 @@ select { max-width: 100%; }
             return [Math.round(w*s), Math.round(h*s)];
         }
         const VIDEO_MODEL_DURATIONS = { 'agnes-video-v2.0': [5,10,15,18], 'agnes-video-2.5-flash': [4,5,6,7,8,9,10,11,12] };
-        let apiKey = '', baseUrl = DEFAULT_API_BASE, model = 'agnes-3.0-flash', currentMode = 'chat';
+        let apiKey = '', baseUrl = DEFAULT_API_BASE, model = 'agnes-3.0-flash', currentMode = 'chat', svKey = '';
         let messages = [], attachments = [], isConnected = false, currentAbortController = null;
         let dramaState = null;
         let runningTasks = 0;
         window._msgAttsMap = [];
         const els = {};
-        ['messages','messageInput','sendBtn','settingsBtn','settingsModal','apiKeyInput','baseUrlInput','modelSelect','modeSelect','imageStyle','imageSize','imageQuality','videoStyle','videoDuration','videoSize','videoQuality','dramaStyle','dramaTotalDuration','dramaShotDuration','dramaSize','dramaTextModel','dramaImageModel','cancelBtn','saveBtn','modelInfo','attachBtn','fileInput','attachmentPreviews','progressContainer','progressFill','progressText','connectionBadge','statusText','toastContainer','welcomeMsg','imageOptions','videoOptions','dramaOptions','dramaParallel','lightboxOverlay','lightboxClose','lightboxBody','taskCounter','panelToggleBtn','inputClearBtn','promptExpertRow','promptExpertBtn','inputZoomBtn'].forEach(id => els[id] = document.getElementById(id));
+        ['messages','messageInput','sendBtn','settingsBtn','settingsModal','apiKeyInput','baseUrlInput','modelSelect','modeSelect','imageStyle','imageSize','imageQuality','videoStyle','videoDuration','videoSize','videoQuality','dramaStyle','dramaTotalDuration','dramaShotDuration','dramaSize','dramaTextModel','dramaImageModel','cancelBtn','saveBtn','modelInfo','attachBtn','fileInput','attachmentPreviews','progressContainer','progressFill','progressText','connectionBadge','statusText','toastContainer','welcomeMsg','imageOptions','videoOptions','dramaOptions','filmOptions','filmSource','filmRatio','filmTarget','filmVoice','filmSubtitle','dramaParallel','lightboxOverlay','lightboxClose','lightboxBody','taskCounter','panelToggleBtn','inputClearBtn','promptExpertRow','promptExpertBtn','inputZoomBtn'].forEach(id => els[id] = document.getElementById(id));
 
         function updateTaskCounter(){ if(runningTasks>0){ els.taskCounter.classList.add('active'); els.taskCounter.textContent=`⏳ ${runningTasks} 个任务进行中`; } else { els.taskCounter.classList.remove('active'); } }
         function taskStart(){ runningTasks++; updateTaskCounter(); }
@@ -1275,6 +1339,7 @@ select { max-width: 100%; }
         function renderInkSwitcher(){
             const wrap = document.getElementById('inkSwitcher');
             if(!wrap) return;
+            wrap.innerHTML='';
             INK_THEMES.forEach(t=>{
                 const b = document.createElement('button');
                 b.type='button'; b.className='ink-swatch'; b.dataset.name=t.name; b.title='水墨主题：'+t.name;
@@ -1314,7 +1379,7 @@ select { max-width: 100%; }
                 const h1 = document.querySelector('.title h1');
                 if(!h1) return;
                 if(!h1.dataset.fullText) h1.dataset.fullText = h1.textContent;
-                const target = compact ? '' : (h1.dataset.fullText || 'Agnes AI 助手');
+                const target = compact ? '' : (h1.dataset.fullText || '免费影音工具箱');
                 if(h1.textContent !== target) h1.textContent = target;
             }catch(e){}
         }
@@ -1449,13 +1514,13 @@ select { max-width: 100%; }
                 }
             }, false);
         }
-        const VALID_MODES = {chat:1,image:1,edit:1,video_text:1,video_image:1,video_multi:1,video_keyframe:1,drama:1,canvas:1};
+        const VALID_MODES = {chat:1,image:1,edit:1,video_text:1,video_image:1,video_multi:1,video_keyframe:1,drama:1,canvas:1,film:1};
         function normalizeMode(m){ return VALID_MODES[m] ? m : 'chat'; }
-        function loadConfig(){ try{ const s=localStorage.getItem('agnes_config'); if(s){const c=JSON.parse(s); apiKey=c.api_key||''; baseUrl=c.base_url||DEFAULT_API_BASE; model=c.model||'agnes-2.5-flash'; currentMode=normalizeMode(c.mode); updateInputs(); updateModelOptions(); if(apiKey) testConnection(true);} }catch(e){} }
-        function saveConfig(){ try{ localStorage.setItem('agnes_config', JSON.stringify({api_key:apiKey,base_url:baseUrl,model:model,mode:currentMode})); return true; }catch(e){ return false; } }
-        function updateInputs(){ els.apiKeyInput.value=apiKey; els.baseUrlInput.value=baseUrl; els.modelSelect.value=model; els.modeSelect.value=normalizeMode(currentMode); }
+        function loadConfig(){ try{ const s=localStorage.getItem('agnes_config'); if(s){const c=JSON.parse(s); apiKey=c.api_key||''; baseUrl=c.base_url||DEFAULT_API_BASE; model=c.model||'agnes-2.5-flash'; currentMode=normalizeMode(c.mode); svKey=c.sensenova_key||''; updateInputs(); updateModelOptions(); if(apiKey) testConnection(true);} }catch(e){} }
+        function saveConfig(){ try{ localStorage.setItem('agnes_config', JSON.stringify({api_key:apiKey,base_url:baseUrl,model:model,mode:currentMode,sensenova_key:svKey})); return true; }catch(e){ return false; } }
+        function updateInputs(){ els.apiKeyInput.value=apiKey; els.baseUrlInput.value=baseUrl; els.modelSelect.value=model; els.modeSelect.value=normalizeMode(currentMode); const _sv=document.getElementById('svKeyInput'); if(_sv) _sv.value=svKey||''; }
         function updateModelOptions(){ currentMode=normalizeMode(currentMode); const ms=availableModels(currentMode); els.modelSelect.innerHTML=''; ms.forEach(m=>{const o=document.createElement('option');o.value=m.value;o.textContent=m.label;els.modelSelect.appendChild(o);}); if(ms.find(m=>m.value===model)) els.modelSelect.value=model; else {els.modelSelect.value=ms[0].value; model=ms[0].value;} updateModelDisplay(); }
-        function updateModelDisplay(){ model=els.modelSelect.value; const mn=(els.modelSelect.options[els.modelSelect.selectedIndex]||{}).text||''; const names={chat:'对话',image:'文生图',edit:'图生图',video_text:'文生视频',video_image:'单图生视频',video_multi:'多图生视频',video_keyframe:'首尾帧生视频',drama:'生成短剧',canvas:'画布'}; els.modelInfo.textContent=`当前模式: ${names[currentMode]||'对话'} | 模型: ${mn||model}`; refreshDurationOptions(); refreshQualityOptions(); }
+        function updateModelDisplay(){ model=els.modelSelect.value; const mn=(els.modelSelect.options[els.modelSelect.selectedIndex]||{}).text||''; const names={chat:'对话',image:'文生图',edit:'图生图',video_text:'文生视频',video_image:'单图生视频',video_multi:'多图生视频',video_keyframe:'首尾帧生视频',drama:'生成短剧',canvas:'画布',film:'一键成片'}; els.modelInfo.textContent=`当前模式: ${names[currentMode]||'对话'} | 模型: ${mn||model}`; refreshDurationOptions(); refreshQualityOptions(); }
 
         function switchMode(){
             const _chatContainer=document.querySelector('.chat-container');
@@ -1475,15 +1540,16 @@ select { max-width: 100%; }
             if(_inputSection) _inputSection.style.display='';
             els.messageInput.value=''; els.messageInput.style.height='auto'; clearAttachments();
             updateModelOptions(); updateModelDisplay();
-            els.imageOptions.classList.remove('active'); els.videoOptions.classList.remove('active'); els.dramaOptions.classList.remove('active');
+            els.imageOptions.classList.remove('active'); els.videoOptions.classList.remove('active'); els.dramaOptions.classList.remove('active'); if(els.filmOptions) els.filmOptions.classList.remove('active');
             /* 提示词优化专家：生图 / 图生图 / 各类生视频模式下显示 */
             if(els.promptExpertBtn) els.promptExpertBtn.classList.toggle('prompt-corner-hidden', !(currentMode==='image'||currentMode==='edit'||currentMode.indexOf('video_')===0));
             const mcWrapper = document.getElementById('multiVideoConstraintWrapper');
             if(mcWrapper) mcWrapper.style.display = 'none';
-            if(currentMode==='chat'){ els.welcomeMsg.textContent='💬 欢迎使用 Agnes AI！'; els.messageInput.placeholder='输入消息，Enter 发送...'; els.attachBtn.style.display='flex'; }
+            if(currentMode==='chat'){ els.welcomeMsg.textContent='💬 欢迎使用免费影音工具箱！'; els.messageInput.placeholder='输入消息，Enter 发送...'; els.attachBtn.style.display='flex'; }
             else if(currentMode==='image'){ els.welcomeMsg.textContent='🎨 文生图模式'; els.messageInput.placeholder='描述你想生成的图片...'; els.attachBtn.style.display='none'; els.imageOptions.classList.add('active'); }
             else if(currentMode==='edit'){ els.welcomeMsg.textContent='✏️ 图生图模式'; els.messageInput.placeholder='描述编辑效果并上传参考图...'; els.attachBtn.style.display='flex'; els.imageOptions.classList.add('active'); }
             else if(currentMode==='drama'){ els.welcomeMsg.textContent='🎬 生成短剧：输入主题，可上传角色参考图'; els.messageInput.placeholder='输入短剧主题，可上传男主/女主角色图...'; els.attachBtn.style.display='flex'; els.dramaOptions.classList.add('active'); }
+            else if(currentMode==='film'){ els.welcomeMsg.textContent='🎬 一键成片：输入主题或粘贴文章，自动配图 + 配音 + 字幕出片'; els.messageInput.placeholder='输入成片主题 / 粘贴文章 / 分镜脚本...'; els.attachBtn.style.display='flex'; if(els.filmOptions) els.filmOptions.classList.add('active'); }
             else if(currentMode.startsWith('video_')){ 
                 els.welcomeMsg.textContent='🎬 视频生成模式'; 
                 els.messageInput.placeholder=currentMode==='video_keyframe'?'描述首尾帧过渡效果，上传2张图...':'描述你想生成的视频...'; 
@@ -1523,7 +1589,7 @@ select { max-width: 100%; }
             try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),8000); const r=await fetch(`${baseUrl}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model:model,messages:[{role:'user',content:'hi'}],max_tokens:5}),signal:c.signal}); clearTimeout(t); if(r.ok){ updateConnectionStatus(true); isConnected=true; if(!isAuto) showToast('连接成功','success'); return true; } else throw new Error(`HTTP ${r.status}`); }catch(e){ updateConnectionStatus(false); isConnected=false; if(!isAuto) showToast(e.message.includes('401')?'API Key无效':'连接失败','error'); return false; }
         }
         function updateConnectionStatus(c){ if(c===null){els.statusText.textContent='连接中...';els.connectionBadge.className='connection-badge disconnected';} else if(c){els.statusText.textContent='已连接';els.connectionBadge.className='connection-badge connected';} else {els.statusText.textContent='未连接';els.connectionBadge.className='connection-badge disconnected';} }
-        async function saveAndConnect(){ apiKey=els.apiKeyInput.value.trim(); baseUrl=els.baseUrlInput.value.trim()||DEFAULT_API_BASE; model=els.modelSelect.value; currentMode=els.modeSelect.value; saveConfig(); closeSettings(); if(apiKey){ isConnected=false; const s=await testConnection(false); if(s){updateModelDisplay(); showToast('保存成功并已连接!','success');} else showToast('已保存配置，但连接失败','error'); } else showToast('配置已保存','info'); }
+        async function saveAndConnect(){ apiKey=els.apiKeyInput.value.trim(); baseUrl=els.baseUrlInput.value.trim()||DEFAULT_API_BASE; model=els.modelSelect.value; currentMode=els.modeSelect.value; const _sv=document.getElementById('svKeyInput'); svKey=_sv?_sv.value.trim():svKey; saveConfig(); closeSettings(); if(apiKey){ isConnected=false; const s=await testConnection(false); if(s){updateModelDisplay(); showToast('保存成功并已连接!','success');} else showToast('已保存配置，但连接失败','error'); } else showToast('配置已保存','info'); }
         function openSettings(){ updateInputs(); els.settingsModal.classList.add('show'); els.apiKeyInput.focus(); if(apiKey) els.apiKeyInput.select(); }
         function closeSettings(){ els.settingsModal.classList.remove('show'); }
         function setProgress(p,t){ els.progressFill.style.width=Math.min(100,p)+'%'; els.progressText.textContent=`${t} ${Math.round(Math.min(100,p))}%`; els.progressContainer.classList.add('active'); }
@@ -1594,8 +1660,8 @@ select { max-width: 100%; }
         function imgResultHTML(url){ const n=nextGenSeq('image'); return `<div class="generated-images"><div class="thumb-preview" style="position:relative;cursor:pointer" onclick="openLightbox('${url}','image')"><img src="${url}" alt=""/><span class="lib-seq" title="生成序号">#${n}</span></div></div>`; }
         function videoResultHTML(url){ const n=nextGenSeq('video'); return `<div class="generated-videos"><div class="thumb-preview" style="position:relative"><video src="${url}" controls onclick="openLightbox('${url}','video')"></video><span class="lib-seq" title="生成序号">#${n}</span></div></div>`; }
         /* ================= 顶部素材库（按功能分区 + 序号） ================= */
-        const LIB_MODE_NAMES = { chat:'💬 对话', image:'🎨 文生图', edit:'✏️ 图生图', video_text:'🎬 文生视频', video_image:'📹 单图生视频', video_multi:'🎞️ 多图生视频', video_keyframe:'🎬 首尾帧生视频', drama:'🎬 短剧', canvas:'🕸️ 画布', other:'📦 其他' };
-        const LIB_MODE_ORDER = ['image','edit','video_text','video_image','video_multi','video_keyframe','drama','canvas','chat','other'];
+        const LIB_MODE_NAMES = { chat:'💬 对话', image:'🎨 文生图', edit:'✏️ 图生图', video_text:'🎬 文生视频', video_image:'📹 单图生视频', video_multi:'🎞️ 多图生视频', video_keyframe:'🎬 首尾帧生视频', film:'🎬 一键成片', drama:'🎬 短剧', canvas:'🕸️ 画布', other:'📦 其他' };
+        const LIB_MODE_ORDER = ['image','edit','video_text','video_image','video_multi','video_keyframe','drama','film','canvas','chat','other'];
         const LIB_TYPE_NAMES = { image:'🖼️ 图片', video:'🎬 视频' };
         let mediaLibItems=[], mediaLibDisplayItems=[], mediaLibCat='all', mediaLibType='all';
         function findPrevUserMsg(el){
@@ -1610,7 +1676,6 @@ select { max-width: 100%; }
             const items=[], seen=new Set(), counters={};
             const add=(url,type,label,aiEl,userEl,node,mode)=>{
                 if(!url) return;
-                if(String(url).indexOf('blob:')===0) return;
                 if(seen.has(url)) return;
                 seen.add(url);
                 const m = mode || 'other';
@@ -1800,12 +1865,13 @@ select { max-width: 100%; }
             else els.messages.appendChild(a);
             scrollToBottom(); try{ updateMediaLibCount(); }catch(e){} return a;
         }
-        const MSG_PROGRESS_MODES = {image:1, edit:1, video_text:1, video_image:1, video_multi:1, video_keyframe:1};
+        const MSG_PROGRESS_MODES = {image:1, edit:1, video_text:1, video_image:1, video_multi:1, video_keyframe:1, film:1};
         function startPendingUserMessage(content, attsIdx, atts){
             const _atts = atts || attachments;
             let u=null;
             if(currentMode==='image') u=makeImageUserMsg(content, els.imageStyle.value, els.imageSize.value, attsIdx);
             else if(currentMode==='edit') u=makeEditUserMsg(_atts.filter(a=>a.type.startsWith('image/')).length, content, els.imageStyle.value, els.imageSize.value, attsIdx);
+            else if(currentMode==='film') u=makeVideoUserMsg(content, '一键成片', (els.filmTarget&&els.filmTarget.value||'30')+'s', (els.filmRatio&&els.filmRatio.value||'16x9'), attsIdx);
             else if(MSG_PROGRESS_MODES[currentMode]) u=makeVideoUserMsg(content, els.videoStyle.value, els.videoDuration.value, els.videoSize.value, attsIdx);
             if(!u) return null;
             const ctx={ abort:null, prog:null, userMsg:u, done:false };
@@ -1959,7 +2025,7 @@ select { max-width: 100%; }
             if(currentMode==='canvas') return;
             const content=els.messageInput.value.trim();
             if(!content&&attachments.length===0) return;
-            if(!apiKey){ showToast('请先配置 API Key','error'); openSettings(); return; }
+            if(!apiKey && !(typeof svKeyGet==='function' && svKeyGet())){ showToast('请先配置 API Key','error'); openSettings(); return; }
             
             els.messageInput.value = '';
             els.messageInput.style.height = 'auto';
@@ -1981,6 +2047,7 @@ select { max-width: 100%; }
                 else if(currentMode==='video_multi') await sendVideoFromMultipleImages(content,signal,attsIdx,ctx,cur);
                 else if(currentMode==='video_keyframe') await sendVideoFromKeyframes(content,signal,attsIdx,ctx,cur);
                 else if(currentMode==='drama') await dramaStep1(content,signal,attsIdx,false);
+                else if(currentMode==='film') await filmSend(content,signal,attsIdx,ctx,cur);
             } finally {
                 if(!ctx){ currentAbortController=null; els.sendBtn.innerHTML='发送'; els.sendBtn.disabled=false; clearAttachments(); }
                 finishCtx(ctx);
@@ -2885,6 +2952,503 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             if (rateEl) rateEl.addEventListener('input', () => { const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = rateEl.value; });
             if (pitchEl) pitchEl.addEventListener('input', () => { const pv = document.getElementById('ttsPitchValue'); if (pv) pv.textContent = pitchEl.value; });
         });
+
+        /* ================= 商汤 SenseNova：独立 Key + 独立 BaseURL 路由 ================= */
+        const SV_BASE = 'https://token.sensenova.cn/v1';
+        const SV_MODELS = { 'sensenova-6.7-flash-lite':1, 'sensenova-6.8-flash-lite':1, 'deepseek-v4-flash':1, 'sensenova-u1-fast':1, 'sensenova-u1.5-lite':1 };
+        function svKeyGet(){
+            if (typeof svKey === 'string' && svKey) return svKey;
+            try { return JSON.parse(localStorage.getItem('agnes_config') || '{}').sensenova_key || ''; } catch(e){ return ''; }
+        }
+        function svKeySave(v){
+            svKey = v;
+            try { const c = JSON.parse(localStorage.getItem('agnes_config') || '{}'); c.sensenova_key = v; localStorage.setItem('agnes_config', JSON.stringify(c)); } catch(e){}
+        }
+        const _baseFetch = window.fetch;
+        window.fetch = async function(input, init){
+            const url = (typeof input === 'string' ? input : (input && input.url) || '');
+            const method = ((init && init.method) || (typeof input === 'object' && input && input.method) || 'GET').toUpperCase();
+            if (method === 'POST' && init && typeof init.body === 'string' &&
+                (url.indexOf('/chat/completions') >= 0 || url.indexOf('/images/generations') >= 0)) {
+                let b = null;
+                try { b = JSON.parse(init.body); } catch(e){}
+                if (b && SV_MODELS[b.model]) {
+                    const k = svKeyGet();
+                    if (!k) throw new Error('未配置商汤 SenseNova API Key：打开「设置」→「商汤 SenseNova API Key」粘贴后保存');
+                    let tail = '';
+                    const m1 = url.indexOf('/chat/completions'); const m2 = url.indexOf('/images/generations');
+                    tail = m1 >= 0 ? url.slice(m1) : (m2 >= 0 ? url.slice(m2) : '');
+                    if (!tail) return _baseFetch(input, init);
+                    const nInit = Object.assign({}, init, {
+                        headers: Object.assign({}, init.headers || {}, { 'Authorization': 'Bearer ' + k, 'Content-Type': 'application/json' })
+                    });
+                    try {
+                        if (m2 >= 0 && m1 < 0) {
+                            const nb = Object.assign({}, b); delete nb.extra_body; nInit.body = JSON.stringify(nb);
+                            const r = await rawFetch(SV_BASE + tail, nInit);
+                            if (!r.ok) { const t = await r.text(); throw new Error('SenseNova HTTP ' + r.status + ': ' + (t || '').slice(0, 180)); }
+                            const d = await r.json(); const it = d && d.data && d.data[0];
+                            if (it && it.b64_json && !/^data:/.test(it.b64_json)) it.b64_json = 'data:image/png;base64,' + it.b64_json;
+                            return new Response(JSON.stringify(d), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                        }
+                        return await rawFetch(SV_BASE + tail, nInit);
+                    } catch (err) {
+                        if (err && err.name === 'TypeError') {
+                            throw new Error('直连 token.sensenova.cn 失败：对方不响应 CORS 预检（OPTIONS），浏览器已拦截。请改用 App 版本调用。原始错误: ' + (err.message || 'network error'));
+                        }
+                        throw err;
+                    }
+                }
+            }
+            return _baseFetch(input, init);
+        };
+
+        /* ================= 顶栏下拉：主题 / 语音 ================= */
+        (function(){
+            function closePops(except){
+                document.querySelectorAll('.hdr-pop').forEach(function(p){ if (p !== except) p.classList.remove('open'); });
+            }
+            function posPop(btn, pop){
+                const r = btn.getBoundingClientRect();
+                pop.style.top = (r.bottom + 8) + 'px';
+                const w = pop.offsetWidth || 260;
+                let l = r.right - w;
+                const vw = window.innerWidth;
+                if (l < 8) l = 8;
+                if (l + w > vw - 8) l = Math.max(8, vw - 8 - w);
+                pop.style.left = l + 'px';
+            }
+            function togglePop(btnId, popId){
+                const b = document.getElementById(btnId), p = document.getElementById(popId);
+                if (!b || !p) return;
+                const willOpen = !p.classList.contains('open');
+                closePops(p);
+                p.classList.toggle('open', willOpen);
+                if (willOpen) posPop(b, p);
+            }
+            window.__toggleHdrPop = togglePop;
+            document.addEventListener('click', function(e){
+                const t = e.target && e.target.closest ? e.target.closest('button, a') : null;
+                if (t && t.id === 'themeBtn') { togglePop('themeBtn', 'themePop'); return; }
+                if (t && t.id === 'voiceBtn') { togglePop('voiceBtn', 'voicePop'); return; }
+                if (t && t.id === 'voiceSaveBtn') { saveTtsConfig(); closePops(null); showToast('语音设置已保存', 'success'); return; }
+                if (t && t.id === 'stockBtn') { closePops(null); openStockLib(); return; }
+                if (!e.target || !e.target.closest || !e.target.closest('.hdr-pop-wrap')) closePops(null);
+            });
+            document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closePops(null); });
+            window.addEventListener('resize', function(){ closePops(null); });
+        })();
+
+        /* ================= 素材库：Pexels / Pixabay 免费 API ================= */
+        const PEXELS_KEY = '0owu8pTyHXErmUiDYCDQGd2vfHcs2JDySGAJUmDiUfa5dPIBTxpVuyqd';
+        const PIXABAY_KEY = '57810367-d415b38217b739dc778247d24';
+        async function stockSearchPexelsPhoto(q, n){
+            const r = await rawFetch('https://api.pexels.com/v1/search?query=' + encodeURIComponent(q) + '&per_page=' + (n || 20) + '&orientation=landscape', { headers: { 'Authorization': PEXELS_KEY } });
+            if (!r.ok) throw new Error('Pexels HTTP ' + r.status);
+            const d = await r.json();
+            return (d.photos || []).map(function(p){
+                return { thumb: p.src && (p.src.medium || p.src.small), full: p.src && (p.src.large2x || p.src.original || p.src.large), page: p.url, type: 'image', w: p.width, h: p.height, by: (p.photographer || '') + ' · Pexels' };
+            }).filter(function(x){ return x.full; });
+        }
+        async function stockSearchPexelsVideo(q, n){
+            const r = await rawFetch('https://api.pexels.com/videos/search?query=' + encodeURIComponent(q) + '&per_page=' + (n || 16), { headers: { 'Authorization': PEXELS_KEY } });
+            if (!r.ok) throw new Error('Pexels HTTP ' + r.status);
+            const d = await r.json();
+            return (d.videos || []).map(function(v){
+                const fs = (v.video_files || []).slice().sort(function(a, b){ return (b.width || 0) - (a.width || 0); });
+                const pick = fs.find(function(f){ return f.width >= 960 && f.width <= 1600; }) || fs.find(function(f){ return f.width >= 640; }) || fs[0] || {};
+                if (!pick.link) return null;
+                return { thumb: v.image, full: pick.link, page: v.url, type: 'video', w: v.width, h: v.height, by: ((v.user && v.user.name) || '') + ' · Pexels' };
+            }).filter(Boolean);
+        }
+        async function stockSearchPixabayPhoto(q, n){
+            const r = await rawFetch('https://pixabay.com/api/?key=' + PIXABAY_KEY + '&q=' + encodeURIComponent(q) + '&image_type=photo&orientation=horizontal&safesearch=true&per_page=' + (n || 20));
+            if (!r.ok) throw new Error('Pixabay HTTP ' + r.status);
+            const d = await r.json();
+            return (d.hits || []).map(function(p){
+                return { thumb: p.webformatURL, full: p.largeImageURL || p.webformatURL, page: p.pageURL, type: 'image', w: p.imageWidth, h: p.imageHeight, by: (p.user || '') + ' · Pixabay' };
+            }).filter(function(x){ return x.full; });
+        }
+        async function stockSearchPixabayVideo(q, n){
+            const r = await rawFetch('https://pixabay.com/api/videos/?key=' + PIXABAY_KEY + '&q=' + encodeURIComponent(q) + '&per_page=' + (n || 16));
+            if (!r.ok) throw new Error('Pixabay HTTP ' + r.status);
+            const d = await r.json();
+            return (d.hits || []).map(function(p){
+                const v = p.videos || {};
+                const pick = (v.medium && v.medium.url) ? v.medium : (v.small && v.small.url) ? v.small : (v.tiny && v.tiny.url) ? v.tiny : null;
+                if (!pick) return null;
+                return { thumb: p.picture, full: pick.url, page: p.pageURL, type: 'video', w: pick.width, h: pick.height, by: (p.user || '') + ' · Pixabay' };
+            }).filter(Boolean);
+        }
+        async function stockDownload(url, filename){
+            try {
+                const r = await rawFetch(url, { mode: 'cors' });
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                const b = await r.blob();
+                const u = URL.createObjectURL(b);
+                const a = document.createElement('a');
+                a.href = u; a.download = filename || ('stock-' + Date.now());
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(function(){ URL.revokeObjectURL(u); }, 4000);
+                return true;
+            } catch(e) {
+                try { window.open(url, '_blank', 'noopener'); } catch(e2){}
+                return false;
+            }
+        }
+        (function buildStockOverlay(){
+            const wrap = document.createElement('div');
+            wrap.className = 'stock-overlay'; wrap.id = 'stockOverlay';
+            wrap.innerHTML =
+                '<div class="stock-panel">' +
+                  '<div class="stock-header"><span>🎞️ 免费素材库 · Pexels / Pixabay</span><button type="button" id="stockClose">✕</button></div>' +
+                  '<div class="stock-toolbar">' +
+                    '<input type="text" id="stockQuery" placeholder="搜索素材关键词：城市夜景 / ocean / coffee">' +
+                    '<select id="stockType"><option value="image">图片</option><option value="video">视频</option></select>' +
+                    '<select id="stockSource"><option value="auto">自动来源</option><option value="pexels">Pexels</option><option value="pixabay">Pixabay</option></select>' +
+                    '<button type="button" id="stockSearchBtn">🔍 搜索</button>' +
+                  '</div>' +
+                  '<div class="stock-status" id="stockStatus">输入关键词开始搜索，结果可直接下载。</div>' +
+                  '<div class="stock-grid" id="stockGrid"></div>' +
+                '</div>';
+            document.body.appendChild(wrap);
+        })();
+        function closeStockLib(){ const o = document.getElementById('stockOverlay'); if (o) o.classList.remove('open'); }
+        function openStockLib(){ const o = document.getElementById('stockOverlay'); if (!o) return; o.classList.add('open'); const q = document.getElementById('stockQuery'); if (q && !q.value) q.focus(); }
+        function stockRender(items){
+            const g = document.getElementById('stockGrid');
+            if (!g) return;
+            if (!items.length) { g.innerHTML = '<div style="grid-column:1/-1;color:var(--ink-muted);font-size:13px;padding:20px 0;">没有找到素材，换个关键词试试。</div>'; return; }
+            g.innerHTML = items.map(function(it){
+                const id = Math.random().toString(36).slice(2);
+                STOCK_CACHE[id] = it;
+                const media = it.type === 'video'
+                    ? '<video src="' + it.full + '" poster="' + (it.thumb || '') + '" muted loop playsinline preload="metadata"></video>'
+                    : '<img loading="lazy" src="' + it.thumb + '" alt="">';
+                const dim = (it.w && it.h) ? (it.w + '×' + it.h) : '';
+                return '<div class="stock-card" data-id="' + id + '">' +
+                    '<div class="sk">' + media + '</div>' +
+                    '<div class="meta" title="' + it.by + '">' + dim + ' · ' + it.by + '</div>' +
+                    '<div class="acts"><button type="button" class="dl" data-act="dl">📥 下载</button><button type="button" data-act="link">🔗 链接</button></div>' +
+                '</div>';
+            }).join('');
+        }
+        const STOCK_CACHE = {};
+        async function doStockSearch(){
+            const q = (document.getElementById('stockQuery') || {}).value || '';
+            const type = (document.getElementById('stockType') || {}).value || 'image';
+            const src = (document.getElementById('stockSource') || {}).value || 'auto';
+            const st = document.getElementById('stockStatus');
+            if (!q.trim()) { showToast('请输入搜索关键词', 'error'); return; }
+            if (st) st.textContent = '🔍 正在搜索「' + q + '」...';
+            let items = [];
+            const tryOrder = (src === 'pexels') ? ['pexels'] : (src === 'pixabay') ? ['pixabay'] : ['pexels', 'pixabay'];
+            for (let i = 0; i < tryOrder.length && !items.length; i++) {
+                try {
+                    if (tryOrder[i] === 'pexels') items = type === 'video' ? await stockSearchPexelsVideo(q) : await stockSearchPexelsPhoto(q);
+                    else items = type === 'video' ? await stockSearchPixabayVideo(q) : await stockSearchPixabayPhoto(q);
+                } catch(e) { items = []; }
+            }
+            if (st) st.textContent = items.length ? ('✅ 找到 ' + items.length + ' 个' + (type === 'video' ? '视频' : '图片') + '素材') : '⚠️ 未取到结果（网络或接口限流），可稍后重试';
+            stockRender(items);
+        }
+        document.addEventListener('click', async function(e){
+            const t = e.target && e.target.closest ? e.target.closest('#stockClose, #stockSearchBtn, .stock-card .acts button') : null;
+            if (!t) return;
+            if (t.id === 'stockClose') { closeStockLib(); return; }
+            if (t.id === 'stockSearchBtn') { await doStockSearch(); return; }
+            const card = t.closest('.stock-card');
+            if (!card) return;
+            const it = STOCK_CACHE[card.dataset.id];
+            if (!it) return;
+            if (t.dataset.act === 'dl') {
+                t.textContent = '⏳ 下载中...';
+                const ok = await stockDownload(it.full, '素材-' + Date.now() + (it.type === 'video' ? '.mp4' : '.jpg'));
+                t.textContent = ok ? '✅ 完成' : '📥 已打开';
+                setTimeout(function(){ t.textContent = '📥 下载'; }, 1800);
+            } else {
+                try { await navigator.clipboard.writeText(it.full); showToast('链接已复制', 'success'); }
+                catch(e2) { showToast(it.full, 'info'); }
+            }
+        });
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Enter' && e.target && e.target.id === 'stockQuery') { e.preventDefault(); doStockSearch(); }
+            if (e.key === 'Escape') closeStockLib();
+        });
+
+        /* ================= 一键成片 ================= */
+        function filmSizeOf(ratio){
+            if (ratio === '9x16') return [720, 1280];
+            if (ratio === '1x1') return [1080, 1080];
+            return [1280, 720];
+        }
+        function filmLoadImg(src){
+            return new Promise(function(res, rej){
+                const im = new Image();
+                if (!/^(data:|blob:)/.test(src)) im.crossOrigin = 'anonymous';
+                im.onload = function(){ res(im); };
+                im.onerror = function(){ rej(new Error('画面加载失败')); };
+                im.src = src;
+            });
+        }
+        function filmCoverDraw(g, im, W, H, zoom){
+            const s = Math.max(W / im.width, H / im.height) * zoom;
+            const w = im.width * s, h = im.height * s;
+            g.drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
+        }
+        function filmFallbackCard(scene, W, H){
+            const c = document.createElement('canvas'); c.width = W; c.height = H;
+            const g = c.getContext('2d');
+            const seed = String(scene.keyword || scene.narration || 'film').split('').reduce(function(a, ch){ return a + ch.charCodeAt(0); }, 0);
+            const hue = seed % 360;
+            const grd = g.createLinearGradient(0, 0, W, H);
+            grd.addColorStop(0, 'hsl(' + hue + ',48%,40%)');
+            grd.addColorStop(1, 'hsl(' + ((hue + 70) % 360) + ',55%,20%)');
+            g.fillStyle = grd; g.fillRect(0, 0, W, H);
+            g.globalAlpha = 0.14; g.fillStyle = '#fff';
+            for (let i = 0; i < 7; i++) {
+                const bw = W * (0.12 + ((seed + i * 37) % 55) / 100);
+                g.fillRect(-W * 0.1 + i * (W / 6), H * (0.12 + ((seed + i * 13) % 62) / 100), bw, H * 0.055);
+            }
+            g.globalAlpha = 1;
+            g.textAlign = 'center'; g.textBaseline = 'middle';
+            g.fillStyle = '#fff';
+            g.font = '700 ' + Math.round(W * 0.072) + 'px system-ui, "Microsoft YaHei", sans-serif';
+            g.fillText(String(scene.keyword || 'SCENE').slice(0, 14), W / 2, H * 0.42);
+            g.font = '400 ' + Math.round(W * 0.034) + 'px system-ui, "Microsoft YaHei", sans-serif';
+            g.globalAlpha = 0.9;
+            g.fillText(String(scene.narration || '').slice(0, 30), W / 2, H * 0.55);
+            g.globalAlpha = 1;
+            return c.toDataURL('image/jpeg', 0.9);
+        }
+        async function filmSafeImg(u){
+            if (!u) return null;
+            if (/^data:/.test(u)) return u;
+            try {
+                const r = await rawFetch(u, { mode: 'cors' });
+                if (!r.ok) return null;
+                const b = await r.blob();
+                if (!b || b.size < 100) return null;
+                return URL.createObjectURL(b);
+            } catch(e) { return null; }
+        }
+        async function filmStockImage(kw){
+            let items = [];
+            try { items = await stockSearchPexelsPhoto(kw, 12); } catch(e) { items = []; }
+            if (!items.length) { try { items = await stockSearchPixabayPhoto(kw, 12); } catch(e) { items = []; } }
+            for (let a = 0; a < 4 && items.length; a++) {
+                const it = items[Math.floor(Math.random() * items.length)];
+                const u = await filmSafeImg(it.full);
+                if (u) return u;
+            }
+            return null;
+        }
+        function filmSubtitleText(g, W, H, text){
+            const fs = Math.max(18, Math.round(W * 0.040));
+            g.font = '600 ' + fs + 'px system-ui, "Microsoft YaHei", sans-serif';
+            g.textAlign = 'center'; g.textBaseline = 'middle';
+            const maxW = W * 0.86;
+            let s = String(text || '');
+            if (g.measureText(s).width > maxW) {
+                while (s.length > 2 && g.measureText(s + '…').width > maxW) s = s.slice(0, -1);
+                s = s + '…';
+            }
+            const bh = fs * 1.9, bw = g.measureText(s).width + fs * 1.6;
+            const by = H - Math.round(H * 0.10) - bh / 2;
+            g.fillStyle = 'rgba(0,0,0,0.55)';
+            g.fillRect((W - bw) / 2, by, bw, bh);
+            g.fillStyle = '#fff';
+            g.fillText(s, W / 2, by + bh / 2);
+        }
+        function filmPaintScene(g, im, W, H, dur, scene, withSub, idx){
+            return new Promise(function(resolve){
+                const t0 = performance.now();
+                function frame(now){
+                    const t = Math.min(1, (now - t0) / (dur * 1000));
+                    const z = 1.0 + 0.10 * t;
+                    g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+                    filmCoverDraw(g, im, W, H, z);
+                    const vg = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.72);
+                    vg.addColorStop(0, 'rgba(0,0,0,0)');
+                    vg.addColorStop(1, 'rgba(0,0,0,0.5)');
+                    g.fillStyle = vg; g.fillRect(0, 0, W, H);
+                    g.textAlign = 'left'; g.textBaseline = 'top';
+                    g.fillStyle = 'rgba(255,255,255,0.75)';
+                    g.font = '600 ' + Math.max(14, Math.round(W * 0.024)) + 'px system-ui, sans-serif';
+                    g.fillText('镜头 ' + (idx + 1), Math.round(W * 0.04), Math.round(H * 0.05));
+                    if (withSub && scene && scene.sub) filmSubtitleText(g, W, H, scene.sub);
+                    if (t >= 1 || (window.__FILM_ABORT__)) { resolve(); return; }
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            });
+        }
+        function filmMime(){
+            if (typeof MediaRecorder === 'undefined') return null;
+            const list = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+            for (let i = 0; i < list.length; i++) { try { if (MediaRecorder.isTypeSupported(list[i])) return list[i]; } catch(e){} }
+            return null;
+        }
+        async function filmReadAttText(atts){
+            try {
+                for (let i = 0; i < (atts || []).length; i++) {
+                    const a = atts[i];
+                    if (!a || !a.file) continue;
+                    if (a.type.startsWith('text/') || /\.(txt|md|html|csv|json)$/i.test(a.name || '')) {
+                        const t = await a.file.text();
+                        if (t && t.trim()) return t.trim();
+                    }
+                }
+            } catch(e){}
+            return '';
+        }
+        async function filmSend(content, signal, attsIdx, ctx, atts){
+            const _atts = atts || attachments;
+            let topic = String(content || '').trim();
+            if (!topic) topic = await filmReadAttText(_atts);
+            if (!topic) { showToast('请输入成片主题，或上传文稿', 'error'); pgFailFor(ctx); return; }
+
+            const ratio = (els.filmRatio && els.filmRatio.value) || '16x9';
+            const targetSec = parseInt((els.filmTarget && els.filmTarget.value) || '30', 10);
+            const source = (els.filmSource && els.filmSource.value) || 'mix';
+            const withVoice = (els.filmVoice && els.filmVoice.value) !== 'off';
+            const withSub = (els.filmSubtitle && els.filmSubtitle.value) !== 'off';
+            const [W, H] = filmSizeOf(ratio);
+
+            const mime = filmMime();
+            const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
+            const g = canvas.getContext('2d');
+            g.fillStyle = '#111'; g.fillRect(0, 0, W, H);
+            if (typeof canvas.captureStream !== 'function' || !mime) {
+                pgFailFor(ctx);
+                appendResultFor(ctx, '⚠️ 当前运行环境不支持视频导出（需 MediaRecorder + canvas.captureStream）。已为你输出分镜文字稿：<div class="film-script">' + filmEscape(topic) + '</div>');
+                return;
+            }
+
+            taskStart();
+            try {
+                /* 1. 分镜脚本 */
+                pgFor(ctx, 4, '① 撰写分镜脚本...');
+                const nScene = Math.max(4, Math.min(12, Math.round(targetSec / 3.5)));
+                const sbTxt = await llmChat([
+                    { role: 'system', content: '你是专业短视频编导。只输出严格合法的 JSON 数组，禁止解释。数组元素格式：{"narration":"旁白，口语化，不超过26字","keyword":"英文画面关键词，3-6个单词","sub":"屏幕字幕，不超过14字"}' },
+                    { role: 'user', content: '主题：' + topic.slice(0, 1500) + '\n\n请输出 ' + nScene + ' 个分镜，旁白连起来是一篇完整的口播稿，不要出现序号。' }
+                ], signal, model);
+                const parsed = extractJSON(sbTxt);
+                let scenes = Array.isArray(parsed) ? parsed : (parsed && (parsed.scenes || parsed.shots || parsed.list)) || [];
+                scenes = scenes.filter(function(s){ return s && (s.narration || s.keyword || s.sub); }).slice(0, nScene);
+                if (!scenes.length) throw new Error('分镜生成失败：模型没有返回有效 JSON，请重试或换模型');
+                scenes = scenes.map(function(s, i){
+                    return { narration: String(s.narration || s.sub || s.keyword || '').trim(), keyword: String(s.keyword || s.narration || 'scene').trim(), sub: String(s.sub || s.narration || '').trim(), index: i };
+                });
+
+                /* 2. 逐镜取画面（素材 → AI → 程序化卡片） */
+                const assets = [];
+                for (let i = 0; i < scenes.length; i++) {
+                    if (signal && signal.aborted) throw new Error('已终止');
+                    pgFor(ctx, 14 + Math.round((i / scenes.length) * 32), '② 准备画面 ' + (i + 1) + '/' + scenes.length + '...');
+                    const kw = scenes[i].keyword || topic.slice(0, 40);
+                    let a = null;
+                    if (source !== 'ai') { try { a = await filmStockImage(kw); } catch(e) { a = null; } }
+                    if (!a && source !== 'stock') {
+                        try {
+                            const sz = ratio === '9x16' ? '720x1280' : (ratio === '1x1' ? '1024x1024' : '1280x720');
+                            const u = await callImageGen(kw + ', cinematic still, high detail, no text', null, sz, signal);
+                            a = await filmSafeImg(u);
+                        } catch(e) { a = null; }
+                    }
+                    if (!a) a = filmFallbackCard(scenes[i], W, H);
+                    assets.push(a);
+                }
+
+                /* 3. 逐镜配音（Edge TTS） */
+                const audioBlobs = new Array(scenes.length).fill(null);
+                if (withVoice) {
+                    for (let i = 0; i < scenes.length; i++) {
+                        if (signal && signal.aborted) throw new Error('已终止');
+                        if (!scenes[i].narration) continue;
+                        pgFor(ctx, 48 + Math.round((i / scenes.length) * 14), '③ 配音 ' + (i + 1) + '/' + scenes.length + '...');
+                        try { audioBlobs[i] = await edgeTtsSpeak(scenes[i].narration, ttsVoice, ttsRate, ttsPitch); } catch(e) { audioBlobs[i] = null; }
+                    }
+                }
+
+                /* 4. 解码音频得到真实时长 */
+                const AC = window.AudioContext || window.webkitAudioContext;
+                let actx = null, dest = null;
+                const hasAudio = audioBlobs.some(Boolean);
+                if (AC && hasAudio) { try { actx = new AC(); dest = actx.createMediaStreamDestination(); if (actx.state === 'suspended') await actx.resume(); } catch(e) { actx = null; dest = null; } }
+                const buffers = new Array(scenes.length).fill(null);
+                const durs = [];
+                for (let i = 0; i < scenes.length; i++) {
+                    let d = Math.min(7, Math.max(2.6, scenes[i].narration.length * 0.26 + 1.4));
+                    if (actx && audioBlobs[i]) {
+                        try { buffers[i] = await actx.decodeAudioData(await audioBlobs[i].arrayBuffer()); d = buffers[i].duration + 0.35; } catch(e) {}
+                    }
+                    durs.push(d);
+                }
+                const totalSec = durs.reduce(function(a, b){ return a + b; }, 0);
+
+                /* 5. 合成录制 */
+                pgFor(ctx, 64, '④ 合成画面与配音...');
+                const camStream = canvas.captureStream(30);
+                const tracks = camStream.getVideoTracks().slice();
+                if (dest) dest.stream.getAudioTracks().forEach(function(t){ tracks.push(t); });
+                const mixed = new MediaStream(tracks);
+                const rec = new MediaRecorder(mixed, { mimeType: mime, videoBitsPerSecond: 4000000 });
+                const chunks = [];
+                rec.ondataavailable = function(e){ if (e.data && e.data.size) chunks.push(e.data); };
+                const stopped = new Promise(function(res){ rec.onstop = res; });
+                rec.start(1000);
+
+                for (let i = 0; i < scenes.length; i++) {
+                    if (signal && signal.aborted) break;
+                    if (actx && buffers[i]) {
+                        try {
+                            const src = actx.createBufferSource();
+                            src.buffer = buffers[i]; src.connect(dest); src.start();
+                        } catch(e){}
+                    }
+                    let im = null;
+                    try { im = await filmLoadImg(assets[i]); } catch(e) { try { im = await filmLoadImg(filmFallbackCard(scenes[i], W, H)); } catch(e2) { im = null; } }
+                    if (im) await filmPaintScene(g, im, W, H, durs[i], scenes[i], withSub, i);
+                    else { g.fillStyle = '#111'; g.fillRect(0, 0, W, H); await new Promise(function(r){ setTimeout(r, Math.min(3000, durs[i] * 1000)); }); }
+                    pgFor(ctx, 64 + Math.round(((i + 1) / scenes.length) * 26), '④ 合成 ' + (i + 1) + '/' + scenes.length + '...');
+                }
+                /* 末帧停留 */
+                await new Promise(function(r){ setTimeout(r, 500); });
+                try { if (rec.state !== 'inactive') rec.stop(); } catch(e){}
+                await stopped;
+                if (actx) { try { actx.close(); } catch(e){} }
+
+                if (signal && signal.aborted) { pgFailFor(ctx); appendResultFor(ctx, '⏹️ 已终止'); return; }
+
+                const blob = new Blob(chunks, { type: mime.split(';')[0] });
+                if (!blob.size) throw new Error('录制结果为空');
+                const url = URL.createObjectURL(blob);
+                const sizeMB = (blob.size / 1048576).toFixed(1);
+                const dl = '<div class="film-actions"><a class="msg-action-btn" href="' + url + '" download="film-' + Date.now() + '.webm">📥 下载成片 (.webm)</a>' +
+                    '<span class="film-meta">' + W + '×' + H + ' · ' + totalSec.toFixed(1) + '秒 · ' + sizeMB + 'MB · ' + scenes.length + ' 镜</span></div>' +
+                    '<div class="film-script">🎙 ' + scenes.map(function(s, i){ return (i + 1) + '. ' + s.narration; }).join('<br>') + '</div>';
+                pgSucceedFor(ctx);
+                appendResultFor(ctx, videoResultHTML(url) + dl);
+                showToast('成片已生成', 'success');
+            } catch(e) {
+                pgFailFor(ctx);
+                appendResultFor(ctx, (signal && signal.aborted) ? '⏹️ 已终止' : '⚠️ 一键成片失败: ' + escapeHtml(e && e.message ? e.message : String(e)));
+                if (e && e.name !== 'AbortError') console.warn('[film]', e);
+            } finally {
+                taskEnd();
+            }
+        }
+        function filmEscape(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        /* 保存时一并写入商汤 Key（挂在设置保存按钮上，独立于既有包装链） */
+        document.addEventListener('click', function(e){
+            const t = e.target && e.target.closest ? e.target.closest('#saveBtn') : null;
+            if (!t) return;
+            const inp = document.getElementById('svKeyInput');
+            if (inp) svKeySave(inp.value.trim());
+        }, true);
 
         init();
     </script>
