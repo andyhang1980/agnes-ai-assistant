@@ -744,9 +744,15 @@ select { max-width: 100%; }
 .hdr-lab { flex: 0 0 54px; font-size: 12px; color: var(--ink-muted); white-space: nowrap; overflow: hidden; }
 .hdr-row select { flex: 1 1 auto; min-width: 0; max-width: 100%; padding: 7px 6px; border: 0; border-radius: 9px; background: var(--ink-soft, #f2f2f2); color: var(--ink-text); font-size: 13px; outline: none; text-overflow: ellipsis; }
 .hdr-row select:focus { box-shadow: 0 0 0 2px var(--ink-accent-soft, rgba(77,107,254,.25)); }
+/* ===== 语音下拉：设置面板风格（标签上 + 控件下）===== */
+.hdr-pop.set-style { padding: 11px 11px 9px; }
+.hdr-pop.set-style .form-group { margin-bottom: 10px; }
+.hdr-pop.set-style .form-group:last-child { margin-bottom: 0; }
+.hdr-pop.set-style .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: var(--ink-text); }
+.hdr-pop.set-style .form-group select { width: 100%; padding: 7px 8px; border: 1px solid var(--ink-line, #ddd); border-radius: 9px; background: var(--ink-panel, #fff); color: var(--ink-text); font-size: 13px; outline: none; }
+.hdr-pop.set-style .form-group select:focus { border-color: var(--ink-accent); box-shadow: 0 0 0 2px var(--ink-accent-soft, rgba(77,107,254,.25)); }
 .hdr-pop .ink-switcher { display: none !important; }
 .btn-settings.pop-open { background: var(--ink-accent-soft); color: var(--ink-accent); }
-.hdr-goto { flex: 1 1 auto; min-width: 0; padding: 7px 6px; border: 0; border-radius: 9px; background: var(--ink-accent-soft, rgba(77,107,254,.12)); color: var(--ink-accent, #4D6BFE); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; font-family: inherit; }
 
   .key-pool-badge, .task-counter, .connection-badge { white-space: nowrap; }
   .lib-btn, .btn-settings { white-space: nowrap; }
@@ -900,14 +906,18 @@ select { max-width: 100%; }
             <div class="task-counter" id="taskCounter">⏳ 0 个任务进行中</div>
             <div class="connection-badge disconnected" id="connectionBadge"><div class="status-dot"></div><span id="statusText">未连接</span></div>
             <div class="hdr-pop-wrap">
-                <button class="btn-settings" id="toolsBtn" title="主题 / 语音 / 素材">🎛️<span class="st-text"> 工具</span></button>
-                <div class="hdr-pop" id="toolsPop">
+                <button class="btn-settings" id="themeBtn" title="切换主题">🎨<span class="st-text"> 主题</span></button>
+                <div class="hdr-pop" id="themePop">
                     <div class="hdr-row"><span class="hdr-lab">🎨 主题</span><select id="inkSelect"></select></div>
-                    <div class="hdr-row"><span class="hdr-lab">🗣 声音</span><select id="ttsVoice"><option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·中文)</option><option value="zh-CN-XiaoyiNeural">晓伊 (女声·中文)</option><option value="zh-CN-YunjianNeural">云健 (男声·中文)</option><option value="zh-CN-YunxiNeural">云希 (男声·中文)</option><option value="zh-CN-YunyangNeural">云扬 (男声·中文)</option><option value="zh-CN-YunfengNeural">云枫 (男声·中文)</option><option value="zh-CN-YunhaoNeural">云皓 (男声·中文)</option><option value="zh-CN-XiaochenNeural">晓辰 (女声·中文)</option><option value="zh-CN-XiaohanNeural">晓涵 (女声·中文)</option><option value="zh-CN-XiaomoNeural">晓墨 (女声·中文)</option><option value="zh-CN-XiaoshuangNeural">晓双 (女声·中文)</option><option value="zh-CN-XiaoweiNeural">晓薇 (女声·中文)</option><option value="zh-CN-XiaoxuanNeural">晓萱 (女声·中文)</option><option value="zh-CN-YunzeNeural">云泽 (男声·中文)</option><option value="en-US-AriaNeural">Aria (女声·英文)</option><option value="en-US-JennyNeural">Jenny (女声·英文)</option><option value="en-US-GuyNeural">Guy (男声·英文)</option><option value="en-US-DavisNeural">Davis (男声·英文)</option><option value="en-US-AmberNeural">Amber (女声·英文)</option><option value="en-US-AnaNeural">Ana (女声·英文)</option><option value="en-GB-SoniaNeural">Sonia (女声·英文)</option><option value="en-GB-RyanNeural">Ryan (男声·英文)</option><option value="ja-JP-NanamiNeural">Nanami (女声·日文)</option><option value="ja-JP-KeitaNeural">Keita (男声·日文)</option><option value="ko-KR-SunHiNeural">SunHi (女声·韩文)</option><option value="ko-KR-InJoonNeural">InJoon (男声·韩文)</option></select></div>
-                    <div class="hdr-row"><span class="hdr-lab">🎚 语速</span><select id="ttsRate"></select></div>
-                    <div class="hdr-row"><span class="hdr-lab">🎚 音调</span><select id="ttsPitch"></select></div>
-                    <div class="hdr-row"><span class="hdr-lab">🎞 素材</span><button type="button" class="hdr-goto" id="stockOpenBtn">免费素材库 →</button></div>
                     <div class="ink-switcher" id="inkSwitcher" style="display:none"></div>
+                </div>
+            </div>
+            <div class="hdr-pop-wrap">
+                <button class="btn-settings" id="voiceBtn" title="语音朗读设置">🔊<span class="st-text"> 语音</span></button>
+                <div class="hdr-pop set-style" id="voicePop">
+                    <div class="form-group"><label>🗣 音色</label><select id="ttsVoice"><option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·中文)</option><option value="zh-CN-XiaoyiNeural">晓伊 (女声·中文)</option><option value="zh-CN-YunjianNeural">云健 (男声·中文)</option><option value="zh-CN-YunxiNeural">云希 (男声·中文)</option><option value="zh-CN-YunyangNeural">云扬 (男声·中文)</option><option value="zh-CN-YunfengNeural">云枫 (男声·中文)</option><option value="zh-CN-YunhaoNeural">云皓 (男声·中文)</option><option value="zh-CN-XiaochenNeural">晓辰 (女声·中文)</option><option value="zh-CN-XiaohanNeural">晓涵 (女声·中文)</option><option value="zh-CN-XiaomoNeural">晓墨 (女声·中文)</option><option value="zh-CN-XiaoshuangNeural">晓双 (女声·中文)</option><option value="zh-CN-XiaoweiNeural">晓薇 (女声·中文)</option><option value="zh-CN-XiaoxuanNeural">晓萱 (女声·中文)</option><option value="zh-CN-YunzeNeural">云泽 (男声·中文)</option><option value="en-US-AriaNeural">Aria (女声·英文)</option><option value="en-US-JennyNeural">Jenny (女声·英文)</option><option value="en-US-GuyNeural">Guy (男声·英文)</option><option value="en-US-DavisNeural">Davis (男声·英文)</option><option value="en-US-AmberNeural">Amber (女声·英文)</option><option value="en-US-AnaNeural">Ana (女声·英文)</option><option value="en-GB-SoniaNeural">Sonia (女声·英文)</option><option value="en-GB-RyanNeural">Ryan (男声·英文)</option><option value="ja-JP-NanamiNeural">Nanami (女声·日文)</option><option value="ja-JP-KeitaNeural">Keita (男声·日文)</option><option value="ko-KR-SunHiNeural">SunHi (女声·韩文)</option><option value="ko-KR-InJoonNeural">InJoon (男声·韩文)</option></select></div>
+                    <div class="form-group"><label>🎚 语速</label><select id="ttsRate"></select></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>🎚 音调</label><select id="ttsPitch"></select></div>
                 </div>
             </div>
             <button class="lib-btn" id="mediaLibBtn" aria-label="素材">📁<span class="lib-count" id="mediaLibCount">0</span></button>
@@ -1083,6 +1093,7 @@ select { max-width: 100%; }
                 <div class="lib-filter-row"><span class="lib-filter-label">类型</span><div class="lib-cats" id="mediaLibTypes"></div></div>
                 <span style="flex:1"></span>
                 <button type="button" class="msg-action-btn" id="mediaLibDownloadAll">⬇️ 下载当前分区</button>
+                <button type="button" class="msg-action-btn" id="mediaLibStock">🎞 免费素材</button>
                 <button type="button" class="msg-action-btn" id="mediaLibRefresh">🔄 刷新</button>
             </div>
             <div class="lib-body"><div class="lib-group-title" id="mediaLibGroupTitle" style="display:none;"></div><div class="lib-grid" id="mediaLibGrid"></div></div>
@@ -1406,11 +1417,12 @@ select { max-width: 100%; }
             }catch(e){}
         }
         function init(){ loadConfig(); setupEvents(); updateModelOptions(); applyUploadImageLimit(); applyCompactHeader(); bindCompactHeader(); if(apiKey) testConnection(true); if(currentMode==='canvas') switchMode(); renderInkSwitcher(); restoreInputZoom();
-            const mlb=document.getElementById('mediaLibBtn'), mlc=document.getElementById('mediaLibClose'), mlr=document.getElementById('mediaLibRefresh'), mld=document.getElementById('mediaLibDownloadAll');
+            const mlb=document.getElementById('mediaLibBtn'), mlc=document.getElementById('mediaLibClose'), mlr=document.getElementById('mediaLibRefresh'), mld=document.getElementById('mediaLibDownloadAll'), mls=document.getElementById('mediaLibStock');
             if(mlb) mlb.addEventListener('click', openMediaLib);
             if(mlc) mlc.addEventListener('click', closeMediaLib);
             if(mlr) mlr.addEventListener('click', openMediaLib);
             if(mld) mld.addEventListener('click', mediaLibDownloadAll);
+            if(mls) mls.addEventListener('click', ()=>{ closeMediaLib(); openStockLib(); });
             const mlo=document.getElementById('mediaLibOverlay');
             if(mlo) mlo.addEventListener('click', e=>{ if(e.target===mlo) closeMediaLib(); });
             const catsBox=document.getElementById('mediaLibCats');
@@ -2999,15 +3011,16 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             return _baseFetch(input, init);
         };
 
-        /* ================= 顶栏：工具下拉（主题 / 语音 / 素材） ================= */
+        /* ================= 顶栏：主题 / 语音下拉 ================= */
         (function(){
-            function setToolsBtn(on){
-                const b = document.getElementById('toolsBtn');
+            function setBtn(id, on){
+                const b = document.getElementById(id);
                 if (b) b.classList.toggle('pop-open', !!on);
             }
             function closePops(except){
                 document.querySelectorAll('.hdr-pop').forEach(function(p){ if (p !== except) p.classList.remove('open'); });
-                setToolsBtn(!!(except && except.id === 'toolsPop'));
+                setBtn('themeBtn', !!(except && except.id === 'themePop'));
+                setBtn('voiceBtn', !!(except && except.id === 'voicePop'));
             }
             function posPop(btn, pop){
                 const r = btn.getBoundingClientRect();
@@ -3019,19 +3032,19 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (l + w > vw - 8) l = Math.max(8, vw - 8 - w);
                 pop.style.left = l + 'px';
             }
-            function toggleTools(){
-                const b = document.getElementById('toolsBtn'), p = document.getElementById('toolsPop');
+            function togglePop(btnId, popId){
+                const b = document.getElementById(btnId), p = document.getElementById(popId);
                 if (!b || !p) return;
                 const willOpen = !p.classList.contains('open');
                 closePops(willOpen ? p : null);
                 p.classList.toggle('open', willOpen);
                 if (willOpen) posPop(b, p);
             }
-            window.__toggleHdrPop = toggleTools;
+            window.__toggleHdrPop = togglePop;
             document.addEventListener('click', function(e){
                 const t = e.target && e.target.closest ? e.target.closest('button, a') : null;
-                if (t && t.id === 'toolsBtn') { toggleTools(); return; }
-                if (t && t.id === 'stockOpenBtn') { closePops(null); openStockLib(); return; }
+                if (t && t.id === 'themeBtn') { togglePop('themeBtn', 'themePop'); return; }
+                if (t && t.id === 'voiceBtn') { togglePop('voiceBtn', 'voicePop'); return; }
                 if (!e.target || !e.target.closest || !e.target.closest('.hdr-pop-wrap')) closePops(null);
             });
             document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closePops(null); });
