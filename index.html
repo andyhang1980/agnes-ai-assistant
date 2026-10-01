@@ -917,7 +917,8 @@ select { max-width: 100%; }
                 <div class="hdr-pop set-style" id="voicePop">
                     <div class="form-group"><label>🗣 音色</label><select id="ttsVoice"><option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·中文)</option><option value="zh-CN-XiaoyiNeural">晓伊 (女声·中文)</option><option value="zh-CN-YunjianNeural">云健 (男声·中文)</option><option value="zh-CN-YunxiNeural">云希 (男声·中文)</option><option value="zh-CN-YunyangNeural">云扬 (男声·中文)</option><option value="zh-CN-YunfengNeural">云枫 (男声·中文)</option><option value="zh-CN-YunhaoNeural">云皓 (男声·中文)</option><option value="zh-CN-XiaochenNeural">晓辰 (女声·中文)</option><option value="zh-CN-XiaohanNeural">晓涵 (女声·中文)</option><option value="zh-CN-XiaomoNeural">晓墨 (女声·中文)</option><option value="zh-CN-XiaoshuangNeural">晓双 (女声·中文)</option><option value="zh-CN-XiaoweiNeural">晓薇 (女声·中文)</option><option value="zh-CN-XiaoxuanNeural">晓萱 (女声·中文)</option><option value="zh-CN-YunzeNeural">云泽 (男声·中文)</option><option value="en-US-AriaNeural">Aria (女声·英文)</option><option value="en-US-JennyNeural">Jenny (女声·英文)</option><option value="en-US-GuyNeural">Guy (男声·英文)</option><option value="en-US-DavisNeural">Davis (男声·英文)</option><option value="en-US-AmberNeural">Amber (女声·英文)</option><option value="en-US-AnaNeural">Ana (女声·英文)</option><option value="en-GB-SoniaNeural">Sonia (女声·英文)</option><option value="en-GB-RyanNeural">Ryan (男声·英文)</option><option value="ja-JP-NanamiNeural">Nanami (女声·日文)</option><option value="ja-JP-KeitaNeural">Keita (男声·日文)</option><option value="ko-KR-SunHiNeural">SunHi (女声·韩文)</option><option value="ko-KR-InJoonNeural">InJoon (男声·韩文)</option></select></div>
                     <div class="form-group"><label>🎚 语速</label><select id="ttsRate"></select></div>
-                    <div class="form-group" style="margin-bottom:0;"><label>🎚 音调</label><select id="ttsPitch"></select></div>
+                    <div class="form-group"><label>🎚 音调</label><select id="ttsPitch"></select></div>
+                    <div class="form-group" style="margin-bottom:0;display:flex;align-items:center;gap:8px;"><button type="button" class="msg-action-btn" id="ttsPreviewBtn" data-tts-label="🔊 试听">🔊 试听</button><span style="font-size:11px;color:#999;">用当前设置朗读示例</span></div>
                 </div>
             </div>
             <button class="lib-btn" id="mediaLibBtn" aria-label="素材">📁<span class="lib-count" id="mediaLibCount">0</span></button>
@@ -2342,7 +2343,7 @@ select { max-width: 100%; }
             }
         }
         
-        function addAIMessage(content){ const div=document.createElement('div'); div.className='message ai'; div.innerHTML=`<div class="message-role">AI:</div><div class="message-bubble">${formatContent(content)}</div>`; els.messages.appendChild(div); scrollToBottom(); }
+        function addAIMessage(content){ const div=document.createElement('div'); div.className='message ai'; div.innerHTML=`<div class="message-role">AI:</div><div class="message-bubble">${formatContent(content)}</div>`; els.messages.appendChild(div); const b=div.querySelector('.message-bubble'); if(b) addCopyButton(div,b); scrollToBottom(); }
         function addCopyButton(aiDiv,bubble){ const a=document.createElement('div'); a.className='msg-actions'; a.innerHTML=`<button class="msg-action-btn btn-copy">📋 复制</button>`; aiDiv.appendChild(a); a.querySelector('.btn-copy').onclick=()=>{ navigator.clipboard.writeText(getPlainText(bubble.innerHTML)).then(()=>showToast('已复制','success')).catch(()=>showToast('复制失败','error')); }; }
         function getPlainText(html){ const t=document.createElement('div'); t.innerHTML=html; t.querySelectorAll('br').forEach(b=>b.replaceWith('\n')); t.querySelectorAll('p,div,pre').forEach(e=>e.append('\n')); return t.innerText||t.textContent; }
         function addImageMessage(prompt,imageUrl,style,size,attsIdx){ const u=document.createElement('div'); u.className='message user'; u.dataset.attsIndex=attsIdx; u.dataset.mode=currentMode; u.dataset.model=model; u.dataset.style=style; u.dataset.size=size; u.dataset.rawtext=prompt||''; const pc=`<div class="param-card">🤖 ${model}<br>🎨 ${style||'默认'}<br>📐 ${size}</div>`; u.innerHTML=`<div class="message-role">用户</div><div class="message-bubble">${escapeHtml(prompt)}${pc}</div>`; const bubble=u.querySelector('.message-bubble'); renderAttachmentsInBubble(bubble,attsIdx); const ua=document.createElement('div'); ua.className='msg-actions'; ua.innerHTML=`<button class="msg-action-btn" onclick="editMsgEl(this)">✏️ 编辑</button><button class="msg-action-btn" onclick="regenMsgEl(this)">🔄 重新生成</button>`; u.appendChild(ua); els.messages.appendChild(u); const a=document.createElement('div'); a.className='message ai'; a.innerHTML=`<div class="message-role">AI:</div><div class="message-bubble"><div class="generated-images"><img src="${imageUrl}" class="thumb-preview" style="cursor:pointer" onclick="openLightbox('${imageUrl}','image')"/></div></div>`; els.messages.appendChild(a); scrollToBottom(); }
@@ -2805,10 +2806,21 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
         let ttsRate = 0;
         let ttsPitch = 0;
         let ttsAudio = null;
+        if (window.speechSynthesis) { try { window.speechSynthesis.getVoices(); window.speechSynthesis.addEventListener('voiceschanged', function(){}); } catch(e){} }
 
-        function getEdgeTtsUrl() {
+        async function secMsGec() {
+            let t = (Date.now() / 1000) + 11644473600;
+            t -= t % 300;
+            t *= 1e9 / 100;
+            const s = String(t) + EDGE_TTS_TOKEN;
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+            return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+        }
+
+        async function getEdgeTtsUrl() {
             const connId = 'edge-tts-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-            return `wss://speech.platform.bing.com/consumer/speech/synthesize/edge/v1?TrustedClientToken=${EDGE_TTS_TOKEN}&ConnectionId=${connId}`;
+            const gec = await secMsGec();
+            return `wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=${EDGE_TTS_TOKEN}&ConnectionId=${connId}&Sec-MS-GEC=${gec}&Sec-MS-GEC-Version=1-143.0.3650.75`;
         }
 
         function buildSsml(text, voice, rate, pitch) {
@@ -2818,10 +2830,10 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             return `<speak version='1.0' xml:lang='zh-CN'><voice name='${voice}'><prosody rate='${rateStr}' pitch='${pitchStr}'>${escaped}</prosody></voice></speak>`;
         }
 
-        function edgeTtsSpeak(text, voice, rate, pitch) {
+        async function edgeTtsSpeak(text, voice, rate, pitch) {
+            if (!text || !text.trim()) throw new Error('文本为空');
+            const url = await getEdgeTtsUrl();
             return new Promise((resolve, reject) => {
-                if (!text || !text.trim()) { reject(new Error('文本为空')); return; }
-                const url = getEdgeTtsUrl();
                 const ws = new WebSocket(url);
                 ws.binaryType = 'arraybuffer';
                 const audioChunks = [];
@@ -2832,10 +2844,13 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 }, 15000);
 
                 ws.onopen = () => {
-                    const configMsg = `X-Timestamp:${Date.now()}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"true"},"outputFormat":"audio-24khz-48kbitrate-mono-mp3"}}}}`;
+                    const rid = crypto.getRandomValues(new Uint8Array(16));
+                    const ridHex = [...rid].map(b => b.toString(16).padStart(2, '0')).join('');
+                    const ts = new Date().toISOString();
+                    const configMsg = `X-RequestId:${ridHex}\r\nX-Timestamp:${ts}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"true"},"outputFormat":"audio-24khz-48kbitrate-mono-mp3"}}}}`;
                     ws.send(configMsg);
                     const ssml = buildSsml(text, voice, rate, pitch);
-                    const ssmlMsg = `X-Timestamp:${Date.now()}\r\nContent-Type:application/ssml+xml\r\nPath:ssml\r\n\r\n${ssml}`;
+                    const ssmlMsg = `X-RequestId:${ridHex}\r\nX-Timestamp:${ts}\r\nContent-Type:application/ssml+xml\r\nPath:ssml\r\n\r\n${ssml}`;
                     ws.send(ssmlMsg);
                 };
 
@@ -2867,8 +2882,8 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     if (!resolved) { resolved = true; clearTimeout(timeout); reject(new Error('TTS 连接失败')); }
                 };
 
-                ws.onclose = () => {
-                    if (!resolved) { resolved = true; clearTimeout(timeout); reject(new Error('TTS 连接已关闭')); }
+                ws.onclose = (e) => {
+                    if (!resolved) { resolved = true; clearTimeout(timeout); reject(new Error('TTS 连接已关闭(' + (e ? e.code : '?') + (e && e.reason ? ' ' + e.reason : '') + ')')); }
                 };
             });
         }
@@ -2887,16 +2902,35 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             }
             if (window.speechSynthesis) window.speechSynthesis.cancel();
             document.querySelectorAll('.tts-playing').forEach(btn => {
-                btn.textContent = '🔊 朗读';
+                btn.textContent = btn.dataset.ttsLabel || '🔊 朗读';
                 btn.classList.remove('tts-playing');
             });
         }
 
-        async function playTts(text, btn) {
+        function localTtsSpeak(text, voice, rate, pitch) {
+            return new Promise((resolve, reject) => {
+                if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { reject(new Error('浏览器不支持本地语音')); return; }
+                const u = new SpeechSynthesisUtterance(text);
+                const voices = window.speechSynthesis.getVoices() || [];
+                const key = String(voice || '').replace(/^zh-[A-Z-]+/i, '').replace(/Neural$/i, '');
+                const v = (key.length > 2 && voices.find(x => x.name.toLowerCase().includes(key.toLowerCase())))
+                    || voices.find(x => /^zh/i.test(x.lang)) || null;
+                if (v) u.voice = v;
+                u.lang = (v && v.lang) || 'zh-CN';
+                u.rate = Math.max(0.1, Math.min(2, 1 + (rate || 0) / 100));
+                u.pitch = Math.max(0, Math.min(2, 1 + (pitch || 0) / 100));
+                u.onend = () => resolve();
+                u.onerror = (e) => { if (e && e.error === 'interrupted') resolve(); else reject(new Error('本地语音失败')); };
+                window.speechSynthesis.speak(u);
+            });
+        }
+
+        async function playTts(text, btn, voice, rate, pitch) {
             stopTts();
+            const v = voice || ttsVoice, r = (rate != null ? rate : ttsRate), p = (pitch != null ? pitch : ttsPitch);
             if (btn) { btn.textContent = '⏹ 停止'; btn.classList.add('tts-playing'); }
             try {
-                const blob = await edgeTtsSpeak(text, ttsVoice, ttsRate, ttsPitch);
+                const blob = await edgeTtsSpeak(text, v, r, p);
                 const url = URL.createObjectURL(blob);
                 const audio = new Audio(url);
                 ttsAudio = audio;
@@ -2904,18 +2938,25 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 audio.onerror = () => { URL.revokeObjectURL(url); stopTts(); };
                 await audio.play();
             } catch (e) {
-                showToast('Edge TTS 失败: ' + e.message, 'error');
-                if (btn) { btn.textContent = '🔊 朗读'; btn.classList.remove('tts-playing'); }
+                try {
+                    await localTtsSpeak(text, v, r, p);
+                    stopTts();
+                } catch (le) {
+                    showToast('语音播放失败: ' + (le.message || e.message), 'error');
+                    if (btn) { btn.textContent = btn.dataset.ttsLabel || '🔊 朗读'; btn.classList.remove('tts-playing'); }
+                }
             }
         }
 
         function addTtsButton(aiDiv, bubble) {
+            if (!aiDiv || aiDiv.querySelector('.msg-actions .btn-tts')) return;
             const text = getTtsTextFromBubble(bubble);
             if (!text) return;
             const actions = aiDiv.querySelector('.msg-actions');
             if (!actions) return;
             const btn = document.createElement('button');
             btn.className = 'msg-action-btn btn-tts';
+            btn.dataset.ttsLabel = '🔊 朗读';
             btn.textContent = '🔊 朗读';
             btn.onclick = () => {
                 if (btn.classList.contains('tts-playing')) { stopTts(); }
@@ -2975,6 +3016,17 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             const pitchEl = document.getElementById('ttsPitch');
             if (rateEl) rateEl.addEventListener('input', () => { const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = rateEl.value; });
             if (pitchEl) pitchEl.addEventListener('input', () => { const pv = document.getElementById('ttsPitchValue'); if (pv) pv.textContent = pitchEl.value; });
+            const pvBtn = document.getElementById('ttsPreviewBtn');
+            if (pvBtn) pvBtn.addEventListener('click', () => {
+                if (pvBtn.classList.contains('tts-playing')) { stopTts(); return; }
+                const v = (document.getElementById('ttsVoice') || {}).value || ttsVoice;
+                const r = parseInt((document.getElementById('ttsRate') || {}).value, 10); const rr = isNaN(r) ? ttsRate : r;
+                const p = parseInt((document.getElementById('ttsPitch') || {}).value, 10); const pp = isNaN(p) ? ttsPitch : p;
+                const sample = /^(ja|ko|en)-/.test(v)
+                    ? 'Hello! This is a voice preview. 你好，这是语音试听。'
+                    : '你好，这是语音试听。当前的音色、语速和音调设置已经生效。';
+                playTts(sample, pvBtn, v, rr, pp);
+            });
         });
 
         /* ================= 顶栏：主题 / 语音下拉 ================= */
@@ -3353,12 +3405,14 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 /* 3. 逐镜配音（Edge TTS） */
                 const audioBlobs = new Array(scenes.length).fill(null);
                 if (withVoice) {
+                    let voiceFail = 0;
                     for (let i = 0; i < scenes.length; i++) {
                         if (signal && signal.aborted) throw new Error('已终止');
                         if (!scenes[i].narration) continue;
                         pgFor(ctx, 48 + Math.round((i / scenes.length) * 14), '③ 配音 ' + (i + 1) + '/' + scenes.length + '...');
-                        try { audioBlobs[i] = await edgeTtsSpeak(scenes[i].narration, ttsVoice, ttsRate, ttsPitch); } catch(e) { audioBlobs[i] = null; }
+                        try { audioBlobs[i] = await edgeTtsSpeak(scenes[i].narration, ttsVoice, ttsRate, ttsPitch); } catch(e) { audioBlobs[i] = null; voiceFail++; }
                     }
+                    if (voiceFail) showToast(voiceFail >= scenes.filter(function(s){return s.narration;}).length ? 'TTS 配音失败，本片将无旁白' : ('部分镜头配音失败 ' + voiceFail + ' 个，已静音处理'), 'warning');
                 }
 
                 /* 4. 解码音频得到真实时长 */
