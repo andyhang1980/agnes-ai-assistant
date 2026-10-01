@@ -1526,7 +1526,7 @@ select { max-width: 100%; }
         const VALID_MODES = {chat:1,image:1,edit:1,video_text:1,video_image:1,video_multi:1,video_keyframe:1,drama:1,canvas:1,film:1};
         function normalizeMode(m){ return VALID_MODES[m] ? m : 'chat'; }
         function loadConfig(){ try{ const s=localStorage.getItem('agnes_config'); if(s){const c=JSON.parse(s); apiKey=c.api_key||''; baseUrl=c.base_url||DEFAULT_API_BASE; model=c.model||'agnes-2.5-flash'; currentMode=normalizeMode(c.mode); } updateInputs(); updateModelOptions(); if(apiKey) testConnection(true); }catch(e){} }
-        function saveConfig(){ try{ localStorage.setItem('agnes_config', JSON.stringify({api_key:apiKey,base_url:baseUrl,model:model,mode:currentMode})); return true; }catch(e){ return false; } }
+        function saveConfig(){ try{ const cfg=JSON.parse(localStorage.getItem('agnes_config')||'{}'); cfg.api_key=apiKey; cfg.base_url=baseUrl; cfg.model=model; cfg.mode=currentMode; localStorage.setItem('agnes_config', JSON.stringify(cfg)); return true; }catch(e){ return false; } }
         function updateInputs(){ els.apiKeyInput.value=apiKey; const bsel=els.baseUrlInput; if(bsel&&bsel.tagName==='SELECT'&&baseUrl&&![...bsel.options].some(o=>o.value===baseUrl)){const o=document.createElement('option');o.value=baseUrl;o.textContent=baseUrl+' (自定义)';bsel.appendChild(o);} bsel.value=baseUrl; els.modelSelect.value=model; els.modeSelect.value=normalizeMode(currentMode); }
         function updateModelOptions(){ currentMode=normalizeMode(currentMode); const ms=availableModels(currentMode); els.modelSelect.innerHTML=''; ms.forEach(m=>{const o=document.createElement('option');o.value=m.value;o.textContent=m.label;els.modelSelect.appendChild(o);}); if(ms.find(m=>m.value===model)) els.modelSelect.value=model; else {els.modelSelect.value=ms[0].value; model=ms[0].value;} updateModelDisplay(); }
         function updateModelDisplay(){ model=els.modelSelect.value; const mn=(els.modelSelect.options[els.modelSelect.selectedIndex]||{}).text||''; const names={chat:'对话',image:'文生图',edit:'图生图',video_text:'文生视频',video_image:'单图生视频',video_multi:'多图生视频',video_keyframe:'首尾帧生视频',drama:'生成短剧',canvas:'画布',film:'一键成片'}; els.modelInfo.textContent=`当前模式: ${names[currentMode]||'对话'} | 模型: ${mn||model}`; refreshDurationOptions(); refreshQualityOptions(); }
@@ -2744,7 +2744,7 @@ async function probeIdleKeys(){
     if(changed){ saveAppConfig(); updateApiKeyStatus(); }
 }
 const _origLoadConfig=window.loadConfig;window.loadConfig=function(){loadApiKeyPool();if(_origLoadConfig)_origLoadConfig();updateApiKeysUI();startApiKeyAutoDetect();};
-const _origSaveConfig=window.saveConfig;window.saveConfig=function(){saveApiKeysFromUI();saveAppConfig();return true;};
+const _origSaveConfig=window.saveConfig;window.saveConfig=function(){const ta=document.getElementById('apiKeysInput');const typed=els.apiKeyInput?String(els.apiKeyInput.value||'').trim():'';if(ta&&typed&&ta.value.indexOf(typed)===-1){ta.value=typed+(ta.value.trim()?('\n'+ta.value.replace(/\s*\n\s*/g,'\n')):'');}saveApiKeysFromUI();if(typed){apiKeyPool=[typed].concat(apiKeyPool.filter(function(k){return k!==typed;}));apiKey=typed;}saveAppConfig();if(_origSaveConfig)_origSaveConfig.apply(this,arguments);return true;};
 const _origOpenSettings=window.openSettings;window.openSettings=function(){if(_origOpenSettings)_origOpenSettings();updateApiKeysUI();};
 const _origTestConnection=window.testConnection;window.testConnection=async function(isAuto=false){if(typeof updateConnectionStatus==='function')updateConnectionStatus(null);if(!apiKeyPool.length){if(typeof updateConnectionStatus==='function')updateConnectionStatus(false);if(typeof isConnected!=='undefined')isConnected=false;return false;}for(const key of apiKeyPool){try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);const r=await rawFetch(`${baseUrl}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model:MODELS.chat[0].value,messages:[{role:'user',content:'hi'}],max_tokens:5}),signal:controller.signal});clearTimeout(timer);if(r.ok){if(typeof isConnected!=='undefined')isConnected=true;if(typeof apiKey!=='undefined')apiKey=key;if(typeof updateConnectionStatus==='function')updateConnectionStatus(true);if(!isAuto)showToast('连接成功','success');updateApiKeyStatus();return true;}}catch(e){}}if(typeof isConnected!=='undefined')isConnected=false;if(typeof updateConnectionStatus==='function')updateConnectionStatus(false);if(!isAuto)showToast('所有 API Key 均连接失败','error');return false;};
 const _origSaveAndConnect=window.saveAndConnect;window.saveAndConnect=async function(){saveApiKeysFromUI();applyApiKeySettingsFromUI();baseUrl=(document.getElementById('baseUrlInput').value||'').trim()||DEFAULT_API_BASE;model=document.getElementById('modelSelect').value;currentMode=document.getElementById('modeSelect').value;saveAppConfig();if(typeof closeSettings==='function')closeSettings();if(!apiKeyPool.length){showToast('已保存配置，但没有填写 API Key','info');return;}isConnected=false;const ok=await window.testConnection(false);if(ok)showToast(`保存成功：共 ${apiKeyPool.length} 个 Key，自动轮询，冷却 ${getApiKeyCooldownSec()} 秒，并行 ${getApiKeyParallel()} 线程`,'success');else showToast('已保存配置，但连接失败','error');};
@@ -2875,7 +2875,10 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                             }
                         }
                     } else if (event.data instanceof ArrayBuffer) {
-                        audioChunks.push(event.data);
+                        const u8 = new Uint8Array(event.data);
+                        let start = 0;
+                        if (u8.length > 4) { const hlen = (u8[0] << 8) | u8[1]; if (hlen > 0 && hlen < 600 && 2 + hlen <= u8.length) start = 2 + hlen; }
+                        if (start < u8.length) audioChunks.push(u8.slice(start).buffer);
                     }
                 };
 
@@ -2890,8 +2893,9 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
         }
 
         function getTtsTextFromBubble(bubble) {
+            if (bubble && bubble.closest && bubble.closest('[data-step]')) return '';
             const clone = bubble.cloneNode(true);
-            clone.querySelectorAll('.msg-actions, .param-card, .generated-images, .generated-videos, .lib-seq').forEach(el => el.remove());
+            clone.querySelectorAll('.msg-actions, .param-card, .generated-images, .generated-videos, .lib-seq, .film-actions, .film-meta, .cursor, .lib-sub, .thumb-hint, a').forEach(el => el.remove());
             return (clone.innerText || clone.textContent || '').trim();
         }
 
@@ -2998,6 +3002,82 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             } catch(e){}
         }
 
+        /* ===== 生成项目缓存（图片/视频 URL + 成片 Blob） ===== */
+        const PROJ_CACHE_KEY = 'proj_cache';
+        function projCacheLoad() { try { return JSON.parse(localStorage.getItem(PROJ_CACHE_KEY) || '[]'); } catch(e) { return []; } }
+        function projCacheSave(list) { try { while (list.length > 60) list.shift(); localStorage.setItem(PROJ_CACHE_KEY, JSON.stringify(list)); } catch(e) {} }
+        function idbOpen() {
+            return new Promise((res, rej) => {
+                try {
+                    const r = indexedDB.open('agnes_proj', 1);
+                    r.onupgradeneeded = () => { try { r.result.createObjectStore('films'); } catch(e) {} };
+                    r.onsuccess = () => res(r.result);
+                    r.onerror = () => rej(r.error);
+                } catch(e) { rej(e); }
+            });
+        }
+        async function idbPut(id, val) {
+            const db = await idbOpen();
+            await new Promise((res, rej) => { const tx = db.transaction('films', 'readwrite'); tx.objectStore('films').put(val, id); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+        }
+        async function idbGet(id) {
+            const db = await idbOpen();
+            return new Promise((res, rej) => { const tx = db.transaction('films', 'readonly'); const rq = tx.objectStore('films').get(id); rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error); });
+        }
+        async function idbDel(id) {
+            try { const db = await idbOpen(); await new Promise((res) => { const tx = db.transaction('films', 'readwrite'); tx.objectStore('films').delete(id); tx.oncomplete = res; tx.onerror = res; }); } catch(e) {}
+        }
+        function projCacheAdd(item) {
+            try {
+                if (item.type === 'img' || item.type === 'video') {
+                    if (!/^https?:/.test(item.url) || item.url.length > 1600) return;
+                }
+                const list = projCacheLoad();
+                list.push(item);
+                projCacheSave(list);
+            } catch(e) {}
+        }
+        async function projCacheFilm(id, blob, secs, script) {
+            try {
+                await idbPut(id, blob);
+                const list = projCacheLoad();
+                list.push({ type: 'film', id: id, ts: Date.now(), secs: secs, script: (script || []).slice(0, 12) });
+                const films = list.filter(x => x.type === 'film');
+                while (films.length > 3) { const old = films.shift(); await idbDel(old.id); const idx = list.indexOf(old); if (idx >= 0) list.splice(idx, 1); }
+                projCacheSave(list);
+            } catch(e) {}
+        }
+        async function projCacheRestore() {
+            try {
+                const list = projCacheLoad();
+                if (!list.length) return;
+                const media = list.filter(x => x.type !== 'film').slice(-12);
+                const films = list.filter(x => x.type === 'film').slice(-3);
+                for (let i = 0; i < films.length; i++) {
+                    try {
+                        const item = films[i];
+                        const b = await idbGet(item.id);
+                        if (!b) continue;
+                        const url = URL.createObjectURL(b);
+                        const scriptHtml = (item.script && item.script.length) ? ('<div class="film-script">🎙 ' + item.script.map(function(t, n){ return (n + 1) + '. ' + escapeHtml(t); }).join('<br>') + '</div>') : '';
+                        appendResultFor(null, videoResultHTML(url) + '<div class="film-actions"><span class="film-meta">📁 历史成片 · ' + Math.round(item.secs || 0) + '秒</span></div>' + scriptHtml);
+                    } catch(e) {}
+                }
+                for (let i = 0; i < media.length; i++) {
+                    try {
+                        const item = media[i];
+                        const label = '<div class="lib-sub">📁 历史 · ' + escapeHtml(String(item.prompt || '').slice(0, 40)) + '</div>';
+                        if (item.type === 'img') appendResultFor(null, '<div class="generated-images"><div class="thumb-preview"><img src="' + item.url + '" onclick="openLightbox(\'' + item.url + '\',\'image\')"></div></div>' + label);
+                        else appendResultFor(null, '<div class="generated-videos"><div class="thumb-preview"><video src="' + item.url + '" controls onclick="openLightbox(\'' + item.url + '\',\'video\')"></video></div></div>' + label);
+                    } catch(e) {}
+                }
+            } catch(e) {}
+        }
+        const _origAddImageMessage = window.addImageMessage;
+        window.addImageMessage = function(prompt, imageUrl) { const r = _origAddImageMessage.apply(this, arguments); projCacheAdd({ type: 'img', url: imageUrl, prompt: String(prompt || '').slice(0, 200), ts: Date.now() }); return r; };
+        const _origAddVideoMessage = window.addVideoMessage;
+        window.addVideoMessage = function(prompt, videoUrl) { const r = _origAddVideoMessage.apply(this, arguments); projCacheAdd({ type: 'video', url: videoUrl, prompt: String(prompt || '').slice(0, 200), ts: Date.now() }); return r; };
+
         const _origInit = window.init;
         window.init = function() { loadTtsConfig(); if (_origInit) _origInit(); };
         const _origSaveAndConnect2 = window.saveAndConnect;
@@ -3043,6 +3123,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             if (rateEl) rateEl.addEventListener('input', () => { const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = rateEl.value; });
             if (pitchEl) pitchEl.addEventListener('input', () => { const pv = document.getElementById('ttsPitchValue'); if (pv) pv.textContent = pitchEl.value; });
             const pvBtn = document.getElementById('ttsPreviewBtn');
+            try { projCacheRestore(); } catch(e) {}
             try { if (els && els.messages) { _msgObserver.observe(els.messages, { childList: true, subtree: true, characterData: true }); ensureMsgButtons(); } } catch(e) {}
             const fsvEl = document.getElementById('filmTtsVoice');
             if (fsvEl) fsvEl.addEventListener('change', function() {
@@ -3440,20 +3521,26 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 const audioBlobs = new Array(scenes.length).fill(null);
                 if (withVoice) {
                     let voiceFail = 0;
+                    let voiceErr = '';
                     for (let i = 0; i < scenes.length; i++) {
                         if (signal && signal.aborted) throw new Error('已终止');
                         if (!scenes[i].narration) continue;
                         pgFor(ctx, 48 + Math.round((i / scenes.length) * 14), '③ 配音 ' + (i + 1) + '/' + scenes.length + '...');
-                        try { audioBlobs[i] = await edgeTtsSpeak(scenes[i].narration, ttsVoice, ttsRate, ttsPitch); } catch(e) { audioBlobs[i] = null; voiceFail++; }
+                        try { audioBlobs[i] = await edgeTtsSpeak(scenes[i].narration, ttsVoice, ttsRate, ttsPitch); } catch(e) { audioBlobs[i] = null; voiceFail++; if (!voiceErr) voiceErr = e && e.message ? e.message : String(e); }
                     }
-                    if (voiceFail) showToast(voiceFail >= scenes.filter(function(s){return s.narration;}).length ? 'TTS 配音失败，本片将无旁白' : ('部分镜头配音失败 ' + voiceFail + ' 个，已静音处理'), 'warning');
+                    if (voiceFail) showToast((voiceFail >= scenes.filter(function(s){return s.narration;}).length ? 'TTS 配音失败，本片将无旁白' : ('部分镜头配音失败 ' + voiceFail + ' 个，已静音处理')) + (voiceErr ? ('：' + voiceErr) : ''), 'warning');
                 }
 
                 /* 4. 解码音频得到真实时长 */
                 const AC = window.AudioContext || window.webkitAudioContext;
                 let actx = null, dest = null;
                 const hasAudio = audioBlobs.some(Boolean);
-                if (AC && hasAudio) { try { actx = new AC(); dest = actx.createMediaStreamDestination(); if (actx.state === 'suspended') await actx.resume(); } catch(e) { actx = null; dest = null; } }
+                if (AC && hasAudio) {
+                    try { actx = new AC(); dest = actx.createMediaStreamDestination(); } catch(e) { actx = null; dest = null; }
+                    if (actx && actx.state === 'suspended') {
+                        try { await Promise.race([actx.resume(), new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('resume timeout')); }, 2500); })]); } catch(e) {}
+                    }
+                }
                 const buffers = new Array(scenes.length).fill(null);
                 const durs = [];
                 for (let i = 0; i < scenes.length; i++) {
@@ -3463,6 +3550,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     }
                     durs.push(d);
                 }
+                if (hasAudio && !buffers.some(Boolean)) { try { showToast('配音音频解码失败，本片可能无旁白', 'warning'); } catch(e) {} }
                 const totalSec = durs.reduce(function(a, b){ return a + b; }, 0);
 
                 /* 5. 合成录制 */
@@ -3503,6 +3591,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (!blob.size) throw new Error('录制结果为空');
                 const url = URL.createObjectURL(blob);
                 const sizeMB = (blob.size / 1048576).toFixed(1);
+                try { projCacheFilm('f' + Date.now(), blob, totalSec, scenes.map(function(s){ return s.narration; })); } catch(e) {}
                 const dl = '<div class="film-actions"><a class="msg-action-btn" href="' + url + '" download="film-' + Date.now() + '.webm">📥 下载成片 (.webm)</a>' +
                     '<span class="film-meta">' + W + '×' + H + ' · ' + totalSec.toFixed(1) + '秒 · ' + sizeMB + 'MB · ' + scenes.length + ' 镜</span></div>' +
                     '<div class="film-script">🎙 ' + scenes.map(function(s, i){ return (i + 1) + '. ' + s.narration; }).join('<br>') + '</div>';
