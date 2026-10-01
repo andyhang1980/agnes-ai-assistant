@@ -2863,6 +2863,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 }, 15000);
 
                 ws.onopen = () => {
+                    console.log('[tts] open');
                     const rid = crypto.getRandomValues(new Uint8Array(16));
                     const ridHex = [...rid].map(b => b.toString(16).padStart(2, '0')).join('');
                     const ts = new Date().toISOString();
@@ -2880,13 +2881,14 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                                 resolved = true;
                                 clearTimeout(timeout);
                                 try { ws.close(); } catch(e){}
-                                if (audioChunks.length > 0) {
-                                    const totalLen = audioChunks.reduce((sum, c) => sum + c.byteLength, 0);
-                                    const merged = new Uint8Array(totalLen);
-                                    let offset = 0;
-                                    audioChunks.forEach(c => { merged.set(new Uint8Array(c), offset); offset += c.byteLength; });
-                                    const blob = new Blob([merged], { type: 'audio/mpeg' });
-                                    resolve(blob);
+                            if (audioChunks.length > 0) {
+                                const totalLen = audioChunks.reduce((sum, c) => sum + c.byteLength, 0);
+                                const merged = new Uint8Array(totalLen);
+                                let offset = 0;
+                                audioChunks.forEach(c => { merged.set(new Uint8Array(c), offset); offset += c.byteLength; });
+                                const blob = new Blob([merged], { type: 'audio/mpeg' });
+                                console.log('[tts] done chunks=' + audioChunks.length + ' bytes=' + blob.size);
+                                resolve(blob);
                                 } else {
                                     reject(new Error('未收到音频数据'));
                                 }
@@ -2901,10 +2903,12 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 };
 
                 ws.onerror = (e) => {
+                    console.log('[tts] error');
                     if (!resolved) { resolved = true; clearTimeout(timeout); reject(new Error('TTS 连接失败')); }
                 };
 
                 ws.onclose = (e) => {
+                    console.log('[tts] close code=' + (e ? e.code : '?') + ' reason=' + (e && e.reason ? e.reason : ''));
                     if (!resolved) { resolved = true; clearTimeout(timeout); reject(new Error('TTS 连接已关闭(' + (e ? e.code : '?') + (e && e.reason ? ' ' + e.reason : '') + ')')); }
                 };
             });
@@ -2935,9 +2939,20 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { reject(new Error('浏览器不支持本地语音')); return; }
                 const u = new SpeechSynthesisUtterance(text);
                 const voices = window.speechSynthesis.getVoices() || [];
-                const key = String(voice || '').replace(/^zh-[A-Z-]+/i, '').replace(/Neural$/i, '');
-                const v = (key.length > 2 && voices.find(x => x.name.toLowerCase().includes(key.toLowerCase())))
-                    || voices.find(x => /^zh/i.test(x.lang)) || null;
+                const raw = String(voice || '');
+                const lang = (raw.split('-').slice(0, 2).join('-') || 'zh').toLowerCase();
+                const name = raw.replace(/^[-A-Za-z]+?-/, '').replace(/Neural$/i, '').replace(/-/g, ' ').trim();
+                const cands = [];
+                if (name) cands.push(name);
+                if (raw) cands.push(raw);
+                let v = null;
+                for (let i = 0; i < cands.length && !v; i++) {
+                    const c = cands[i].toLowerCase();
+                    if (c.length < 2) continue;
+                    v = voices.find(function(x) { return String(x.name).toLowerCase().indexOf(c) >= 0; }) || null;
+                }
+                if (!v) v = voices.find(function(x) { return String(x.lang).toLowerCase().replace('_', '-').indexOf(lang) === 0; }) || null;
+                if (!v) v = voices.find(function(x) { return /^zh/i.test(x.lang); }) || null;
                 if (v) u.voice = v;
                 u.lang = (v && v.lang) || 'zh-CN';
                 u.rate = Math.max(0.1, Math.min(2, 1 + (rate || 0) / 100));
@@ -3150,6 +3165,17 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (ve) ve.value = ttsVoice;
                 saveTtsConfig();
             });
+            const voiceSelEl = document.getElementById('ttsVoice');
+            if (voiceSelEl) voiceSelEl.addEventListener('change', function() {
+                ttsVoice = voiceSelEl.value;
+                const fv2 = document.getElementById('filmTtsVoice');
+                if (fv2) fv2.value = ttsVoice;
+                saveTtsConfig();
+                const opt = voiceSelEl.options[voiceSelEl.selectedIndex];
+                try { showToast('音色已切换：' + (opt ? opt.text : ttsVoice), 'success'); } catch(e) {}
+            });
+            if (rateEl) rateEl.addEventListener('change', function() { ttsRate = parseInt(rateEl.value, 10) || 0; saveTtsConfig(); });
+            if (pitchEl) pitchEl.addEventListener('change', function() { ttsPitch = parseInt(pitchEl.value, 10) || 0; saveTtsConfig(); });
             if (pvBtn) pvBtn.addEventListener('click', () => {
                 if (pvBtn.classList.contains('tts-playing')) { stopTts(); return; }
                 const v = (document.getElementById('ttsVoice') || {}).value || ttsVoice;
@@ -3558,6 +3584,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     if (actx && actx.state === 'suspended') {
                         try { await Promise.race([actx.resume(), new Promise(function(_, rej){ setTimeout(function(){ rej(new Error('resume timeout')); }, 2500); })]); } catch(e) {}
                     }
+                    console.log('[film] actx=' + (actx ? actx.state : 'none'));
                 }
                 const buffers = new Array(scenes.length).fill(null);
                 const durs = [];
@@ -3569,6 +3596,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     durs.push(d);
                 }
                 if (hasAudio && !buffers.some(Boolean)) { try { showToast('配音音频解码失败，本片可能无旁白', 'warning'); } catch(e) {} }
+                console.log('[film] audio blobs=' + audioBlobs.filter(Boolean).length + ' decoded=' + buffers.filter(Boolean).length + '/' + scenes.length);
                 const totalSec = durs.reduce(function(a, b){ return a + b; }, 0);
 
                 /* 5. 合成录制 */
@@ -3579,9 +3607,10 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 const mixed = new MediaStream(tracks);
                 const rec = new MediaRecorder(mixed, { mimeType: mime, videoBitsPerSecond: 4000000 });
                 const chunks = [];
-                rec.ondataavailable = function(e){ if (e.data && e.data.size) chunks.push(e.data); };
+                rec.ondataavailable = function(e){ if (e.data && e.data.size) { chunks.push(e.data); if (chunks.length <= 3) console.log('[film] chunk' + chunks.length + ' size=' + e.data.size); } };
                 const stopped = new Promise(function(res){ rec.onstop = res; });
                 rec.start(1000);
+                console.log('[film] rec=' + rec.state + ' tracks=' + mixed.getTracks().map(function(t){ return t.kind; }).join('|'));
 
                 for (let i = 0; i < scenes.length; i++) {
                     if (signal && signal.aborted) break;
@@ -3606,6 +3635,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (signal && signal.aborted) { pgFailFor(ctx); appendResultFor(ctx, '⏹️ 已终止'); return; }
 
                 const blob = new Blob(chunks, { type: mime.split(';')[0] });
+                console.log('[film] recorded chunks=' + chunks.length + ' bytes=' + blob.size);
                 if (!blob.size) throw new Error('录制结果为空');
                 const url = URL.createObjectURL(blob);
                 const sizeMB = (blob.size / 1048576).toFixed(1);
