@@ -1065,6 +1065,7 @@ select { max-width: 100%; }
             <span class="opt-pair"><label>画幅:</label><select id="filmRatio"><option value="16x9" selected="">16:9 横屏</option><option value="9x16">9:16 竖屏</option><option value="1x1">1:1 方形</option></select></span>
             <span class="opt-pair"><label>时长:</label><select id="filmTarget"><option value="15">约15秒</option><option value="30" selected="">约30秒</option><option value="60">约60秒</option></select></span>
             <span class="opt-pair"><label>配音:</label><select id="filmVoice"><option value="on" selected="">开启（Edge TTS）</option><option value="off">关闭</option></select></span>
+            <span class="opt-pair"><label>音色:</label><select id="filmTtsVoice"></select></span>
             <span class="opt-pair"><label>字幕:</label><select id="filmSubtitle"><option value="on" selected="">显示</option><option value="off">隐藏</option></select></span>
         </div>
         </div>
@@ -2949,9 +2950,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
         }
 
         function addTtsButton(aiDiv, bubble) {
-            if (!aiDiv || aiDiv.querySelector('.msg-actions .btn-tts')) return;
-            const text = getTtsTextFromBubble(bubble);
-            if (!text) return;
+            if (!aiDiv || !bubble || aiDiv.querySelector('.msg-actions .btn-tts')) return;
             const actions = aiDiv.querySelector('.msg-actions');
             if (!actions) return;
             const btn = document.createElement('button');
@@ -2959,8 +2958,10 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             btn.dataset.ttsLabel = '🔊 朗读';
             btn.textContent = '🔊 朗读';
             btn.onclick = () => {
-                if (btn.classList.contains('tts-playing')) { stopTts(); }
-                else { playTts(text, btn); }
+                if (btn.classList.contains('tts-playing')) { stopTts(); return; }
+                const text = getTtsTextFromBubble(bubble);
+                if (!text) { showToast('没有可朗读的文字', 'warning'); return; }
+                playTts(text, btn);
             };
             actions.appendChild(btn);
         }
@@ -2976,6 +2977,8 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             const rateEl = document.getElementById('ttsRate');
             const pitchEl = document.getElementById('ttsPitch');
             if (voiceEl) voiceEl.value = ttsVoice;
+            const fsv = document.getElementById('filmTtsVoice');
+            if (fsv && voiceEl) { if (!fsv.options.length) fsv.innerHTML = voiceEl.innerHTML; fsv.value = ttsVoice; }
             if (rateEl) { rateEl.value = ttsRate; const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = ttsRate; }
             if (pitchEl) { pitchEl.value = ttsPitch; const pv = document.getElementById('ttsPitchValue'); if (pv) pv.textContent = ttsPitch; }
         }
@@ -2984,6 +2987,8 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             ttsVoice = (document.getElementById('ttsVoice') || {}).value || ttsVoice;
             ttsRate = parseInt((document.getElementById('ttsRate') || {}).value, 10) || 0;
             ttsPitch = parseInt((document.getElementById('ttsPitch') || {}).value, 10) || 0;
+            const fsvSave = document.getElementById('filmTtsVoice');
+            if (fsvSave) fsvSave.value = ttsVoice;
             try {
                 const cfg = JSON.parse(localStorage.getItem('agnes_config') || '{}');
                 cfg.tts_voice = ttsVoice;
@@ -3011,12 +3016,41 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             return result;
         };
 
+        let _msgObsTimer = null;
+        function ensureMsgButtons() {
+            try {
+                if (!els || !els.messages) return;
+                const list = els.messages.querySelectorAll('.message.ai');
+                for (let i = 0; i < list.length; i++) {
+                    const ai = list[i];
+                    if (ai.querySelector('.msg-actions .btn-tts')) continue;
+                    const bubble = ai.querySelector('.message-bubble');
+                    if (!bubble) continue;
+                    if (!getTtsTextFromBubble(bubble)) continue;
+                    if (ai.querySelector('.msg-actions')) addTtsButton(ai, bubble);
+                    else addCopyButton(ai, bubble);
+                }
+            } catch(e) {}
+        }
+        const _msgObserver = new MutationObserver(function() {
+            if (_msgObsTimer) return;
+            _msgObsTimer = setTimeout(function() { _msgObsTimer = null; ensureMsgButtons(); }, 300);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const rateEl = document.getElementById('ttsRate');
             const pitchEl = document.getElementById('ttsPitch');
             if (rateEl) rateEl.addEventListener('input', () => { const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = rateEl.value; });
             if (pitchEl) pitchEl.addEventListener('input', () => { const pv = document.getElementById('ttsPitchValue'); if (pv) pv.textContent = pitchEl.value; });
             const pvBtn = document.getElementById('ttsPreviewBtn');
+            try { if (els && els.messages) { _msgObserver.observe(els.messages, { childList: true, subtree: true, characterData: true }); ensureMsgButtons(); } } catch(e) {}
+            const fsvEl = document.getElementById('filmTtsVoice');
+            if (fsvEl) fsvEl.addEventListener('change', function() {
+                ttsVoice = fsvEl.value;
+                const ve = document.getElementById('ttsVoice');
+                if (ve) ve.value = ttsVoice;
+                saveTtsConfig();
+            });
             if (pvBtn) pvBtn.addEventListener('click', () => {
                 if (pvBtn.classList.contains('tts-playing')) { stopTts(); return; }
                 const v = (document.getElementById('ttsVoice') || {}).value || ttsVoice;
