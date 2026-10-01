@@ -1115,7 +1115,7 @@ select { max-width: 100%; }
         <div class="modal-content">
             <div class="modal-title">⚙️ 设置</div>
             <div class="form-group"><label>🧩 服务商</label><select id="providerSelect"><option value="agnes">Agnes（默认）</option><option value="sv">商汤 SenseNova</option></select><div id="providerHint" style="font-size:11px;color:#999;margin-top:5px;"></div></div>
-            <div class="form-group" id="svKeyGroup" style="display:none;"><label>🔑 商汤 API Key 池（每行一个）</label><textarea id="svKeysInput" placeholder="支持批量粘贴多个商汤 Key，每行一个，或用逗号、空格分隔"></textarea><div class="api-key-actions"><button type="button" class="msg-action-btn" id="importSvKeysBtn">📁 导入TXT</button><button type="button" class="msg-action-btn" id="testAllSvKeysBtn">🧪 测试全部</button><button type="button" class="msg-action-btn" id="clearSvKeysBtn">🗑️ 清空</button></div><div id="svKeyPoolStatus" class="api-key-status">未配置商汤 Key</div><div class="api-key-settings"><label style="display:inline-flex;align-items:center;gap:5px;">🔁 自动检测<input type="checkbox" id="svKeyAutoDetectChk" style="margin:0;" title="定时探测空闲商汤 Key：限流/失效自动冷却，恢复后自动解冻"></label><label title="自动检测的轮询间隔">🔁间隔(秒)<input type="number" id="svKeyDetectIntervalInput" min="5" max="3600" step="5" value="30" style="width:56px;"></label><label>⏱️ 冷却时间(秒)<input type="number" id="svKeyCooldownInput" min="0" max="3600" step="10" value="60"></label><label>🧵 并发线程<select id="svKeyParallelMode" style="padding:4px 6px;border:1px solid #E8E8E8;border-radius:6px;font-size:11px;background:#fff;color:#333;"><option value="auto">自动·跟随可用Key</option><option value="manual">手动指定</option></select><input type="number" id="svKeyParallelInput" min="1" max="99" step="1" value="1" readonly="" style="background:#f5f5f5;color:#888;"></label><span id="svKeyCapHint" style="font-size:11px;color:#4D6BFE;"></span><button type="button" class="msg-action-btn" id="applySvKeySettingsBtn">✅ 应用</button></div><div style="font-size:11px;color:#999;margin-top:6px;">💾 点击保存会写入配置文件 · 支持多 Key 并发与自动冷却</div></div>
+            <div class="form-group" id="svKeyGroup" style="display:none;"><label>🔑 商汤 API Key 池（每行一个）</label><textarea id="svKeysInput" placeholder="每行一个 sk- 开头的商汤 Key（platform.sensenova.cn 控制台创建），支持逗号/空格分隔"></textarea><div class="api-key-actions"><button type="button" class="msg-action-btn" id="importSvKeysBtn">📁 导入TXT</button><button type="button" class="msg-action-btn" id="testAllSvKeysBtn">🧪 测试全部</button><button type="button" class="msg-action-btn" id="clearSvKeysBtn">🗑️ 清空</button></div><div id="svKeyPoolStatus" class="api-key-status">未配置商汤 Key</div><div class="api-key-settings"><label style="display:inline-flex;align-items:center;gap:5px;">🔁 自动检测<input type="checkbox" id="svKeyAutoDetectChk" style="margin:0;" title="定时探测空闲商汤 Key：限流/失效自动冷却，恢复后自动解冻"></label><label title="自动检测的轮询间隔">🔁间隔(秒)<input type="number" id="svKeyDetectIntervalInput" min="5" max="3600" step="5" value="30" style="width:56px;"></label><label>⏱️ 冷却时间(秒)<input type="number" id="svKeyCooldownInput" min="0" max="3600" step="10" value="60"></label><label>🧵 并发线程<select id="svKeyParallelMode" style="padding:4px 6px;border:1px solid #E8E8E8;border-radius:6px;font-size:11px;background:#fff;color:#333;"><option value="auto">自动·跟随可用Key</option><option value="manual">手动指定</option></select><input type="number" id="svKeyParallelInput" min="1" max="99" step="1" value="1" readonly="" style="background:#f5f5f5;color:#888;"></label><span id="svKeyCapHint" style="font-size:11px;color:#4D6BFE;"></span><button type="button" class="msg-action-btn" id="applySvKeySettingsBtn">✅ 应用</button></div><div style="font-size:11px;color:#999;margin-top:6px;">💾 点击保存会写入配置文件 · 支持多 Key 并发与自动冷却</div></div>
             <div class="form-group" id="svBaseGroup" style="display:none;"><label>🌐 商汤 Base URL</label><input type="text" id="svBaseUrlInput" placeholder="https://token.sensenova.cn/v1"></div>
             <div class="form-group" id="agnesKeyGroup"><label>🔑 API Key 池</label><input type="password" id="apiKeyInput" placeholder="输入您的 API Key..." style="display: none;"><textarea id="apiKeysInput" placeholder="支持批量粘贴多个 API Key：
 每行一个，或用逗号、空格、分号分隔。"></textarea><div class="api-key-actions"><button type="button" class="msg-action-btn" id="importApiKeysBtn">📁 导入TXT</button><button type="button" class="msg-action-btn" id="testAllApiKeysBtn">🧪 测试全部</button><button type="button" class="msg-action-btn" id="clearApiKeysBtn">🗑️ 清空</button></div><div class="api-key-settings"><label style="display:inline-flex;align-items:center;gap:5px;">🔁 自动检测<input type="checkbox" id="apiKeyAutoDetectChk" style="margin:0;" title="定时探测空闲 Key：限流/失效自动冷却，恢复后自动解冻，调用时只用可用 Key"></label><label title="自动检测的轮询间隔">🔁间隔(秒)<input type="number" id="apiKeyDetectIntervalInput" min="5" max="3600" step="5" value="30" style="width:56px;"></label><label>⏱️ 冷却时间(秒)<input type="number" id="apiKeyCooldownInput" min="0" max="3600" step="10" value="60"></label><label>🧵 并发线程<select id="apiKeyParallelMode" style="padding:4px 6px;border:1px solid #E8E8E8;border-radius:6px;font-size:11px;background:#fff;color:#333;"><option value="auto">自动·跟随可用Key</option><option value="manual">手动指定</option></select><input type="number" id="apiKeyParallelInput" min="1" max="1" step="1" value="1" readonly="" style="background: rgb(245, 245, 245); color: rgb(136, 136, 136);"></label><span id="apiKeyCapHint" style="font-size:11px;color:#4D6BFE;"></span><button type="button" class="msg-action-btn" id="applyApiKeySettingsBtn">✅ 应用</button></div><div id="apiKeyPoolStatus" class="api-key-status">未配置 API Key</div><div style="font-size:11px;color:#999;margin-top:6px;">💾 点击保存会写入配置文件</div></div>
@@ -1165,7 +1165,7 @@ select { max-width: 100%; }
         const RETIRED_MODELS = ['agnes-2.0-flash','agnes-image-2.0-flash','agnes-image-1.0','agnes-video-v1.0','agnes-1.0-flash'];
         /* ✅ 只保留官方在用的免费模型，第一项 = 最新免费推荐模型（默认选中） */
         const MODELS = {
-            chat: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (商汤·免费)', sv: 1 }, { value: 'sensenova-6.7-flash-lite', label: 'SenseNova 6.7 Flash Lite (商汤·免费)', sv: 1 }, { value: 'deepseek-v4-flash', label: 'DeepSeek V4 Flash (商汤·免费)', sv: 1 }, { value: 'sensenova-u1.5-lite', label: 'SenseNova U1.5 Lite (商汤)', sv: 1 }, { value: 'sensenova-u1-fast', label: 'SenseNova U1 Fast (商汤)', sv: 1 }],
+            chat: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (商汤·多模态)', sv: 1 }, { value: 'sensenova-u1.5-lite', label: 'SenseNova U1.5 Lite (商汤·图/视频理解)', sv: 1 }, { value: 'sensenova-u1.5-fast', label: 'SenseNova U1.5 Fast (商汤·高并发)', sv: 1 }, { value: 'deepseek-v4-flash', label: 'DeepSeek V4 Flash (商汤·Agent)', sv: 1 }, { value: 'deepseek-flash', label: 'DeepSeek V4.1 Flash (商汤)', sv: 1 }, { value: 'glm-5.2', label: 'GLM-5.2 (商汤·长上下文 Coding)', sv: 1 }, { value: 'kimi-k3', label: 'Kimi K3 (商汤·原生 Agent)', sv: 1 }],
             image: [{ value: 'agnes-image-2.5-flash', label: 'Agnes Image 2.5 Flash (免费)' }, { value: 'agnes-image-2.1-flash', label: 'Agnes Image 2.1 Flash (免费)' }],
             edit: [{ value: 'agnes-image-2.5-flash', label: 'Agnes Image 2.5 Flash (免费)' }, { value: 'agnes-image-2.1-flash', label: 'Agnes Image 2.1 Flash (免费)' }],
             video_text: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
@@ -1174,7 +1174,7 @@ select { max-width: 100%; }
             video_keyframe: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
             drama: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
             canvas: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }],
-            film: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (商汤·免费)', sv: 1 }, { value: 'sensenova-6.7-flash-lite', label: 'SenseNova 6.7 Flash Lite (商汤·免费)', sv: 1 }]
+            film: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (商汤)', sv: 1 }, { value: 'deepseek-v4-flash', label: 'DeepSeek V4 Flash (商汤)', sv: 1 }, { value: 'glm-5.2', label: 'GLM-5.2 (商汤)', sv: 1 }]
         };
         /* ✅ 各模型官方支持的最大图片上传数量（调用时按模型实际能力截取） */
         const MODEL_MAX_IMAGES = {
@@ -1183,7 +1183,14 @@ select { max-width: 100%; }
             'agnes-image-2.5-flash': 5,
             'agnes-image-2.1-flash': 5,
             'agnes-video-2.5-flash': 5,
-            'agnes-video-v2.0': 5
+            'agnes-video-v2.0': 5,
+            'sensenova-6.8-flash-lite': 5,
+            'sensenova-u1.5-lite': 1,
+            'sensenova-u1.5-fast': 1,
+            'deepseek-v4-flash': 1,
+            'deepseek-flash': 1,
+            'glm-5.2': 1,
+            'kimi-k3': 1
         };
         function getModelMaxImages(m){ return MODEL_MAX_IMAGES[m] || 5; }
         /* ✅ 当前模式下允许上传的图片张数（按官方能力：单图生视频 1 张、首尾帧 2 张，其余按模型上限） */
@@ -1217,7 +1224,7 @@ select { max-width: 100%; }
         let provider = 'agnes';
         let svBaseUrl = SV_BASE_DEFAULT;
         let svKey = '';
-        function isSvModel(m) { const v = String(m || ''); return /^sensenova-/i.test(v) || /^deepseek-/i.test(v); }
+        function isSvModel(m) { const v = String(m || ''); return /^(sensenova-|deepseek-|glm-|kimi-|moonshot-|qwen-)/i.test(v); }
         function providerOfModel(m) { return isSvModel(m) ? 'sv' : 'agnes'; }
         function activeBase(m) { return providerOfModel(m == null ? model : m) === 'sv' ? (svBaseUrl || SV_BASE_DEFAULT) : baseUrl; }
         function activeKey(m) { if (providerOfModel(m == null ? model : m) !== 'sv') return apiKey; if (svKeyPool.length) { svKey=svKeyPool[0]; return svKey; } return svKey; }
