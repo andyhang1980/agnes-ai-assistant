@@ -21,7 +21,7 @@ body::after { content: ""; position: fixed; inset: 0px; z-index: -1; pointer-eve
                 radial-gradient(38vw 26vw at 6% 110%,  var(--ink-wash), transparent 64%),
                 radial-gradient(30vw 22vw at 100% 106%,var(--ink-wash), transparent 62%); filter: blur(2px); }
 
-.header { background: var(--ink-header); backdrop-filter: blur(6px); padding: var(--hdr-pad); display: flex; justify-content: space-between; align-items: center; gap: var(--hdr-gap); border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; box-shadow: 0 1px 0 var(--ink-soft), 0 4px 14px -6px var(--ink-shadow); }
+.header { position: relative; z-index: 900; background: var(--ink-header); backdrop-filter: blur(6px); padding: var(--hdr-pad); display: flex; justify-content: space-between; align-items: center; gap: var(--hdr-gap); border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; box-shadow: 0 1px 0 var(--ink-soft), 0 4px 14px -6px var(--ink-shadow); }
 
 body.is-mobile .header, body.is-compact .header { flex-wrap: nowrap; overflow: hidden; }
 
