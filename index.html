@@ -900,14 +900,14 @@ select { max-width: 100%; }
 }</style>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>免费影音工具箱</title>
+    <title>阿福影音工具箱</title>
     
 </head>
 <body style="--ink-header: rgba(252,250,244,.90); --ink-panel: rgba(252,250,244,.84); --ink-line: rgba(60,52,40,.35); --ink-wash: rgba(60,52,40,.09); --ink-soft: rgba(60,52,40,.05); --ink-shadow: rgba(60,52,40,.12); --ink-hl: rgba(255,255,255,.60); --ink-text: #2E2A24; --ink-muted: #8B8578; --ink-accent: #4A4034; --ink-accent-soft: rgba(74,64,52,.08); --ink-accent-hover: rgba(74,64,52,.16); --ink-bub-u: #F0EDE3; --ink-bub-a: rgba(255,253,248,.94); --ink-grain: 0.05; --ink-m1: rgba(120,110,92,.16); --ink-m2: rgba(90,82,66,.22); background: radial-gradient(1200px 500px at 85% -10%, rgba(196, 181, 150, 0.28), transparent 60%), radial-gradient(900px 420px at -5% 22%, rgba(178, 168, 146, 0.18), transparent 55%), linear-gradient(165deg, rgb(247, 244, 236) 0%, rgb(251, 249, 243) 50%, rgb(242, 238, 227) 100%);">
     <div class="header">
-        <div class="logo-area" title="免费影音工具箱 · 对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布">
+        <div class="logo-area" title="阿福影音工具箱 · 对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布">
             <div class="logo">🤖</div>
-            <div class="title"><h1 data-full-text="免费影音工具箱">免费影音工具箱</h1><p>对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布</p></div>
+            <div class="title"><h1 data-full-text="阿福影音工具箱">阿福影音工具箱</h1><p>对话 · 生图 · 图编辑 · 生视频 · 短剧 · 画布</p></div>
         </div>
         <div class="header-right">
             <div class="key-pool-badge" id="keyPoolBadge" title="API Key 池状态">🔑 可用 0 · 冷却 0</div>
@@ -926,6 +926,8 @@ select { max-width: 100%; }
                     <div class="form-group"><label>🗣 音色</label><select id="ttsVoice"><option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·中文)</option><option value="zh-CN-XiaoyiNeural">晓伊 (女声·中文)</option><option value="zh-CN-YunjianNeural">云健 (男声·中文)</option><option value="zh-CN-YunxiNeural">云希 (男声·中文)</option><option value="zh-CN-YunyangNeural">云扬 (男声·中文)</option><option value="zh-CN-YunfengNeural">云枫 (男声·中文)</option><option value="zh-CN-YunhaoNeural">云皓 (男声·中文)</option><option value="zh-CN-XiaochenNeural">晓辰 (女声·中文)</option><option value="zh-CN-XiaohanNeural">晓涵 (女声·中文)</option><option value="zh-CN-XiaomoNeural">晓墨 (女声·中文)</option><option value="zh-CN-XiaoshuangNeural">晓双 (女声·中文)</option><option value="zh-CN-XiaoweiNeural">晓薇 (女声·中文)</option><option value="zh-CN-XiaoxuanNeural">晓萱 (女声·中文)</option><option value="zh-CN-YunzeNeural">云泽 (男声·中文)</option><option value="en-US-AriaNeural">Aria (女声·英文)</option><option value="en-US-JennyNeural">Jenny (女声·英文)</option><option value="en-US-GuyNeural">Guy (男声·英文)</option><option value="en-US-DavisNeural">Davis (男声·英文)</option><option value="en-US-AmberNeural">Amber (女声·英文)</option><option value="en-US-AnaNeural">Ana (女声·英文)</option><option value="en-GB-SoniaNeural">Sonia (女声·英文)</option><option value="en-GB-RyanNeural">Ryan (男声·英文)</option><option value="ja-JP-NanamiNeural">Nanami (女声·日文)</option><option value="ja-JP-KeitaNeural">Keita (男声·日文)</option><option value="ko-KR-SunHiNeural">SunHi (女声·韩文)</option><option value="ko-KR-InJoonNeural">InJoon (男声·韩文)</option></select></div>
                     <div class="form-group"><label>🎚 语速</label><select id="ttsRate"></select></div>
                     <div class="form-group"><label>🎚 音调</label><select id="ttsPitch"></select></div>
+                    <div class="form-group" id="ttsSysWrap" style="display:none;"><label>🖥 系统音色（当前浏览器）</label><select id="ttsSysVoice"></select></div>
+                    <div id="ttsEngineHint" style="font-size:11px;color:#999;margin:0 0 8px;line-height:1.5;"></div>
                     <div class="form-group" style="margin-bottom:0;display:flex;align-items:center;gap:8px;"><button type="button" class="msg-action-btn" id="ttsPreviewBtn" data-tts-label="🔊 试听">🔊 试听</button><span style="font-size:11px;color:#999;">用当前设置朗读示例</span></div>
                 </div>
             </div>
@@ -937,7 +939,7 @@ select { max-width: 100%; }
         <button class="lightbox-close" id="lightboxClose">×</button>
         <div id="lightboxBody"></div>
     </div>
-    <div class="chat-container"><div class="messages" id="messages"><div class="welcome" id="welcomeMsg">💬 欢迎使用免费影音工具箱！点击右上角⚙️设置API Key后即可开始</div></div></div>
+    <div class="chat-container"><div class="messages" id="messages"><div class="welcome" id="welcomeMsg">💬 欢迎使用阿福影音工具箱！点击右上角⚙️设置API Key后即可开始</div></div></div>
 <div id="canvasSection">
 <div class="canvas-toolbar">
 <button class="tb-btn">⬅️ 退出</button>
@@ -1112,7 +1114,10 @@ select { max-width: 100%; }
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-title">⚙️ 设置</div>
-            <div class="form-group"><label>🔑 API Key 池</label><input type="password" id="apiKeyInput" placeholder="输入您的 API Key..." style="display: none;"><textarea id="apiKeysInput" placeholder="支持批量粘贴多个 API Key：
+            <div class="form-group"><label>🧩 服务商</label><select id="providerSelect"><option value="agnes">Agnes（默认）</option><option value="sv">商汤 SenseNova</option></select><div id="providerHint" style="font-size:11px;color:#999;margin-top:5px;"></div></div>
+            <div class="form-group" id="svKeyGroup" style="display:none;"><label>🔑 商汤 API Key</label><input type="password" id="svKeyInput" placeholder="SenseNova token（sensenova.cn 控制台获取）"></div>
+            <div class="form-group" id="svBaseGroup" style="display:none;"><label>🌐 商汤 Base URL</label><input type="text" id="svBaseUrlInput" placeholder="https://token.sensenova.cn/v1"></div>
+            <div class="form-group" id="agnesKeyGroup"><label>🔑 API Key 池</label><input type="password" id="apiKeyInput" placeholder="输入您的 API Key..." style="display: none;"><textarea id="apiKeysInput" placeholder="支持批量粘贴多个 API Key：
 每行一个，或用逗号、空格、分号分隔。"></textarea><div class="api-key-actions"><button type="button" class="msg-action-btn" id="importApiKeysBtn">📁 导入TXT</button><button type="button" class="msg-action-btn" id="testAllApiKeysBtn">🧪 测试全部</button><button type="button" class="msg-action-btn" id="clearApiKeysBtn">🗑️ 清空</button></div><div class="api-key-settings"><label style="display:inline-flex;align-items:center;gap:5px;">🔁 自动检测<input type="checkbox" id="apiKeyAutoDetectChk" style="margin:0;" title="定时探测空闲 Key：限流/失效自动冷却，恢复后自动解冻，调用时只用可用 Key"></label><label title="自动检测的轮询间隔">🔁间隔(秒)<input type="number" id="apiKeyDetectIntervalInput" min="5" max="3600" step="5" value="30" style="width:56px;"></label><label>⏱️ 冷却时间(秒)<input type="number" id="apiKeyCooldownInput" min="0" max="3600" step="10" value="60"></label><label>🧵 并发线程<select id="apiKeyParallelMode" style="padding:4px 6px;border:1px solid #E8E8E8;border-radius:6px;font-size:11px;background:#fff;color:#333;"><option value="auto">自动·跟随可用Key</option><option value="manual">手动指定</option></select><input type="number" id="apiKeyParallelInput" min="1" max="1" step="1" value="1" readonly="" style="background: rgb(245, 245, 245); color: rgb(136, 136, 136);"></label><span id="apiKeyCapHint" style="font-size:11px;color:#4D6BFE;"></span><button type="button" class="msg-action-btn" id="applyApiKeySettingsBtn">✅ 应用</button></div><div id="apiKeyPoolStatus" class="api-key-status">未配置 API Key</div><div style="font-size:11px;color:#999;margin-top:6px;">💾 点击保存会写入配置文件</div></div>
             <div class="form-group"><label>🌐 Base URL</label><select id="baseUrlInput"><option value="https://apihub.agnes-ai.com/v1">国际版 apihub.agnes-ai.com</option><option value="https://api.agnes-ai.cn/v1">国内版 api.agnes-ai.cn</option></select></div>
             <div class="modal-buttons"><button class="btn-cancel" id="cancelBtn">取消</button><button class="btn-save" id="saveBtn">💾 保存并连接</button></div>
@@ -1145,6 +1150,11 @@ select { max-width: 100%; }
         .film-actions a.msg-action-btn { text-decoration: none; max-width: 100%; }
         .film-meta { font-size: 11px; color: var(--ink-muted,#888); overflow-wrap: anywhere; }
         .film-script { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+        .film-item { justify-content: center; }
+        .film-item .thumb-preview { width: min(100%, 460px); height: auto; aspect-ratio: 16 / 9; }
+        .film-item .thumb-preview video { object-fit: contain; background: #000; }
+        .film-item + .film-actions, .film-item ~ .film-actions { justify-content: center; }
+        @media (max-width: 768px) { .film-item .thumb-preview { width: 100%; } }
         .film-script { margin-top: 8px; font-size: 12px; color: var(--ink-muted,#888); border-top: 1px dashed var(--ink-line,#ddd); padding-top: 6px; max-height: 160px; overflow-y: auto; }
         @media (max-width: 640px) { .stock-grid { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); } .stock-panel { width: 98vw; height: 94vh; } }
         </style>
@@ -1155,7 +1165,7 @@ select { max-width: 100%; }
         const RETIRED_MODELS = ['agnes-2.0-flash','agnes-image-2.0-flash','agnes-image-1.0','agnes-video-v1.0','agnes-1.0-flash'];
         /* ✅ 只保留官方在用的免费模型，第一项 = 最新免费推荐模型（默认选中） */
         const MODELS = {
-            chat: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }],
+            chat: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (商汤·免费)', sv: 1 }, { value: 'sensenova-6.7-flash-lite', label: 'SenseNova 6.7 Flash Lite (商汤·免费)', sv: 1 }, { value: 'deepseek-v4-flash', label: 'DeepSeek V4 Flash (商汤·免费)', sv: 1 }, { value: 'sensenova-u1.5-lite', label: 'SenseNova U1.5 Lite (商汤)', sv: 1 }, { value: 'sensenova-u1-fast', label: 'SenseNova U1 Fast (商汤)', sv: 1 }],
             image: [{ value: 'agnes-image-2.5-flash', label: 'Agnes Image 2.5 Flash (免费)' }, { value: 'agnes-image-2.1-flash', label: 'Agnes Image 2.1 Flash (免费)' }],
             edit: [{ value: 'agnes-image-2.5-flash', label: 'Agnes Image 2.5 Flash (免费)' }, { value: 'agnes-image-2.1-flash', label: 'Agnes Image 2.1 Flash (免费)' }],
             video_text: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
@@ -1164,7 +1174,7 @@ select { max-width: 100%; }
             video_keyframe: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
             drama: [{ value: 'agnes-video-2.5-flash', label: 'Agnes Video 2.5 Flash (免费)' }, { value: 'agnes-video-v2.0', label: 'Agnes Video V2.0 (免费)' }],
             canvas: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }],
-            film: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }]
+            film: [{ value: 'agnes-3.0-flash', label: 'Agnes 3.0 Flash (免费)' }, { value: 'agnes-2.5-flash', label: 'Agnes 2.5 Flash (免费)' }, { value: 'sensenova-6.8-flash-lite', label: 'SenseNova 6.8 Flash Lite (商汤·免费)', sv: 1 }, { value: 'sensenova-6.7-flash-lite', label: 'SenseNova 6.7 Flash Lite (商汤·免费)', sv: 1 }]
         };
         /* ✅ 各模型官方支持的最大图片上传数量（调用时按模型实际能力截取） */
         const MODEL_MAX_IMAGES = {
@@ -1203,7 +1213,20 @@ select { max-width: 100%; }
             });
             return {added:added, skipped:skipped, max:max};
         }
-        function availableModels(key){ return (MODELS[key]||MODELS.chat).filter(m=>RETIRED_MODELS.indexOf(m.value)<0); }
+        const SV_BASE_DEFAULT = 'https://token.sensenova.cn/v1';
+        let provider = 'agnes';
+        let svBaseUrl = SV_BASE_DEFAULT;
+        let svKey = '';
+        function isSvModel(m) { const v = String(m || ''); return /^sensenova-/i.test(v) || /^deepseek-/i.test(v); }
+        function providerOfModel(m) { return isSvModel(m) ? 'sv' : 'agnes'; }
+        function activeBase(m) { return providerOfModel(m == null ? model : m) === 'sv' ? (svBaseUrl || SV_BASE_DEFAULT) : baseUrl; }
+        function activeKey(m) { return providerOfModel(m == null ? model : m) === 'sv' ? svKey : apiKey; }
+        const TEXT_PROVIDER_MODES = { chat: 1, film: 1 };
+        function availableModels(key) {
+            const all = (MODELS[key] || MODELS.chat).filter(m => RETIRED_MODELS.indexOf(m.value) < 0);
+            if (!TEXT_PROVIDER_MODES[key]) return all;
+            return all.filter(m => providerOfModel(m.value) === provider);
+        }
         /* ✅ 各模型支持的画质（分辨率档位），按模型动态显示 */
         const IMAGE_MODEL_QUALITY = {
             'agnes-image-2.5-flash': [{v:'1K',l:'1K 标准 (1024)'},{v:'2K',l:'2K 高清 (2048)'},{v:'3K',l:'3K 超清 (3072)'},{v:'4K',l:'4K 极致 (4096)'}],
@@ -1396,7 +1419,7 @@ select { max-width: 100%; }
                 const h1 = document.querySelector('.title h1');
                 if(!h1) return;
                 if(!h1.dataset.fullText) h1.dataset.fullText = h1.textContent;
-                const target = compact ? '' : (h1.dataset.fullText || '免费影音工具箱');
+                const target = compact ? '' : (h1.dataset.fullText || '阿福影音工具箱');
                 if(h1.textContent !== target) h1.textContent = target;
             }catch(e){}
         }
@@ -1534,9 +1557,9 @@ select { max-width: 100%; }
         }
         const VALID_MODES = {chat:1,image:1,edit:1,video_text:1,video_image:1,video_multi:1,video_keyframe:1,drama:1,canvas:1,film:1};
         function normalizeMode(m){ return VALID_MODES[m] ? m : 'chat'; }
-        function loadConfig(){ try{ const s=localStorage.getItem('agnes_config'); if(s){const c=JSON.parse(s); apiKey=c.api_key||''; baseUrl=c.base_url||DEFAULT_API_BASE; model=c.model||'agnes-2.5-flash'; currentMode=normalizeMode(c.mode); } updateInputs(); updateModelOptions(); if(apiKey) testConnection(true); }catch(e){} }
-        function saveConfig(){ try{ const cfg=JSON.parse(localStorage.getItem('agnes_config')||'{}'); cfg.api_key=apiKey; cfg.base_url=baseUrl; cfg.model=model; cfg.mode=currentMode; localStorage.setItem('agnes_config', JSON.stringify(cfg)); return true; }catch(e){ return false; } }
-        function updateInputs(){ els.apiKeyInput.value=apiKey; const bsel=els.baseUrlInput; if(bsel&&bsel.tagName==='SELECT'&&baseUrl&&![...bsel.options].some(o=>o.value===baseUrl)){const o=document.createElement('option');o.value=baseUrl;o.textContent=baseUrl+' (自定义)';bsel.appendChild(o);} bsel.value=baseUrl; els.modelSelect.value=model; els.modeSelect.value=normalizeMode(currentMode); }
+        function loadConfig(){ try{ const s=localStorage.getItem('agnes_config'); if(s){const c=JSON.parse(s); apiKey=c.api_key||''; baseUrl=c.base_url||DEFAULT_API_BASE; model=c.model||'agnes-2.5-flash'; currentMode=normalizeMode(c.mode); provider=(c.provider==='sv')?'sv':'agnes'; svBaseUrl=c.sv_base_url||SV_BASE_DEFAULT; svKey=c.sv_key||''; if(providerOfModel(model)!==provider){ const list=availableModels(currentMode); if(list.length) model=list[0].value; } } updateInputs(); applyProviderUI(); updateModelOptions(); if(apiKey||svKey) testConnection(true); }catch(e){} }
+        function saveConfig(){ try{ const cfg=JSON.parse(localStorage.getItem('agnes_config')||'{}'); cfg.api_key=apiKey; cfg.base_url=baseUrl; cfg.model=model; cfg.mode=currentMode; cfg.provider=provider; cfg.sv_base_url=svBaseUrl; cfg.sv_key=svKey; localStorage.setItem('agnes_config', JSON.stringify(cfg)); return true; }catch(e){ return false; } }
+        function updateInputs(){ els.apiKeyInput.value=apiKey; const bsel=els.baseUrlInput; if(bsel&&bsel.tagName==='SELECT'&&baseUrl&&![...bsel.options].some(o=>o.value===baseUrl)){const o=document.createElement('option');o.value=baseUrl;o.textContent=baseUrl+' (自定义)';bsel.appendChild(o);} bsel.value=baseUrl; els.modelSelect.value=model; els.modeSelect.value=normalizeMode(currentMode); const ps=document.getElementById('providerSelect'); if(ps) ps.value=provider; const sk=document.getElementById('svKeyInput'); if(sk) sk.value=svKey; const sb=document.getElementById('svBaseUrlInput'); if(sb) sb.value=svBaseUrl; }
         function updateModelOptions(){ currentMode=normalizeMode(currentMode); const ms=availableModels(currentMode); els.modelSelect.innerHTML=''; ms.forEach(m=>{const o=document.createElement('option');o.value=m.value;o.textContent=m.label;els.modelSelect.appendChild(o);}); if(ms.find(m=>m.value===model)) els.modelSelect.value=model; else {els.modelSelect.value=ms[0].value; model=ms[0].value;} updateModelDisplay(); }
         function updateModelDisplay(){ model=els.modelSelect.value; const mn=(els.modelSelect.options[els.modelSelect.selectedIndex]||{}).text||''; const names={chat:'对话',image:'文生图',edit:'图生图',video_text:'文生视频',video_image:'单图生视频',video_multi:'多图生视频',video_keyframe:'首尾帧生视频',drama:'生成短剧',canvas:'画布',film:'一键成片'}; els.modelInfo.textContent=`当前模式: ${names[currentMode]||'对话'} | 模型: ${mn||model}`; refreshDurationOptions(); refreshQualityOptions(); }
 
@@ -1563,7 +1586,7 @@ select { max-width: 100%; }
             if(els.promptExpertBtn) els.promptExpertBtn.classList.toggle('prompt-corner-hidden', !(currentMode==='image'||currentMode==='edit'||currentMode.indexOf('video_')===0));
             const mcWrapper = document.getElementById('multiVideoConstraintWrapper');
             if(mcWrapper) mcWrapper.style.display = 'none';
-            if(currentMode==='chat'){ els.welcomeMsg.textContent='💬 欢迎使用免费影音工具箱！'; els.messageInput.placeholder='输入消息，Enter 发送...'; els.attachBtn.style.display='flex'; }
+            if(currentMode==='chat'){ els.welcomeMsg.textContent='💬 欢迎使用阿福影音工具箱！'; els.messageInput.placeholder='输入消息，Enter 发送...'; els.attachBtn.style.display='flex'; }
             else if(currentMode==='image'){ els.welcomeMsg.textContent='🎨 文生图模式'; els.messageInput.placeholder='描述你想生成的图片...'; els.attachBtn.style.display='none'; els.imageOptions.classList.add('active'); }
             else if(currentMode==='edit'){ els.welcomeMsg.textContent='✏️ 图生图模式'; els.messageInput.placeholder='描述编辑效果并上传参考图...'; els.attachBtn.style.display='flex'; els.imageOptions.classList.add('active'); }
             else if(currentMode==='drama'){ els.welcomeMsg.textContent='🎬 生成短剧：输入主题，可上传角色参考图'; els.messageInput.placeholder='输入短剧主题，可上传男主/女主角色图...'; els.attachBtn.style.display='flex'; els.dramaOptions.classList.add('active'); }
@@ -1604,11 +1627,12 @@ select { max-width: 100%; }
         }
         async function testConnection(isAuto=false){
             updateConnectionStatus(null);
-            try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),8000); const r=await fetch(`${baseUrl}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model:model,messages:[{role:'user',content:'hi'}],max_tokens:5}),signal:c.signal}); clearTimeout(t); if(r.ok){ updateConnectionStatus(true); isConnected=true; if(!isAuto) showToast('连接成功','success'); return true; } else throw new Error(`HTTP ${r.status}`); }catch(e){ updateConnectionStatus(false); isConnected=false; if(!isAuto) showToast(e.message.includes('401')?'API Key无效':'连接失败','error'); return false; }
+            try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),8000); const _b=activeBase(model), _k=activeKey(model); const r=await fetch(`${_b}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${_k}`,'Content-Type':'application/json'},body:JSON.stringify({model:model,messages:[{role:'user',content:'hi'}],max_tokens:5}),signal:c.signal}); clearTimeout(t); if(r.ok){ updateConnectionStatus(true); isConnected=true; if(!isAuto) showToast('连接成功','success'); return true; } else throw new Error(`HTTP ${r.status}`); }catch(e){ updateConnectionStatus(false); isConnected=false; if(!isAuto) showToast(e.message.includes('401')?'API Key无效':'连接失败','error'); return false; }
         }
         function updateConnectionStatus(c){ if(c===null){els.statusText.textContent='连接中...';els.connectionBadge.className='connection-badge disconnected';} else if(c){els.statusText.textContent='已连接';els.connectionBadge.className='connection-badge connected';} else {els.statusText.textContent='未连接';els.connectionBadge.className='connection-badge disconnected';} }
-        async function saveAndConnect(){ apiKey=els.apiKeyInput.value.trim(); baseUrl=els.baseUrlInput.value.trim()||DEFAULT_API_BASE; model=els.modelSelect.value; currentMode=els.modeSelect.value; saveConfig(); closeSettings(); if(apiKey){ isConnected=false; const s=await testConnection(false); if(s){updateModelDisplay(); showToast('保存成功并已连接!','success');} else showToast('已保存配置，但连接失败','error'); } else showToast('配置已保存','info'); }
-        function openSettings(){ updateInputs(); els.settingsModal.classList.add('show'); els.apiKeyInput.focus(); if(apiKey) els.apiKeyInput.select(); }
+        async function saveAndConnect(){ provider=(document.getElementById('providerSelect')||{}).value||provider; svKey=((document.getElementById('svKeyInput')||{}).value||'').trim(); svBaseUrl=(((document.getElementById('svBaseUrlInput')||{}).value)||'').trim()||SV_BASE_DEFAULT; apiKey=els.apiKeyInput.value.trim(); baseUrl=els.baseUrlInput.value.trim()||DEFAULT_API_BASE; model=els.modelSelect.value; currentMode=els.modeSelect.value; saveConfig(); closeSettings(); const _k=activeKey(model); if(_k){ isConnected=false; const s=await testConnection(false); if(s){updateModelDisplay(); showToast('保存成功并已连接!','success');} else showToast('已保存配置，但连接失败','error'); } else showToast('配置已保存','info'); }
+        function openSettings(){ updateInputs(); applyProviderUI(); els.settingsModal.classList.add('show'); }
+        function applyProviderUI(){ const ps=document.getElementById('providerSelect'); const kg=document.getElementById('agnesKeyGroup'); const sk=document.getElementById('svKeyGroup'); const sb=document.getElementById('svBaseGroup'); const hint=document.getElementById('providerHint'); if(ps) ps.value=provider; if(kg) kg.style.display=provider==='sv'?'none':'block'; if(sk) sk.style.display=provider==='sv'?'block':'none'; if(sb) sb.style.display=provider==='sv'?'block':'none'; if(hint) hint.textContent=provider==='sv'?'商汤仅支持对话/一键成片等文本功能；生图、生视频仍使用 Agnes。':'Agnes 提供对话、生图、生视频、短剧、一键成片等全部功能。'; }
         function closeSettings(){ els.settingsModal.classList.remove('show'); }
         function setProgress(p,t){ els.progressFill.style.width=Math.min(100,p)+'%'; els.progressText.textContent=`${t} ${Math.round(Math.min(100,p))}%`; els.progressContainer.classList.add('active'); }
         function hideProgress(){ els.progressContainer.classList.remove('active'); els.progressFill.style.width='0%'; }
@@ -1676,7 +1700,7 @@ select { max-width: 100%; }
         let genSeqCounter={};
         function nextGenSeq(kind){ genSeqCounter[kind]=(genSeqCounter[kind]||0)+1; return genSeqCounter[kind]; }
         function imgResultHTML(url){ const n=nextGenSeq('image'); return `<div class="generated-images"><div class="thumb-preview" style="position:relative;cursor:pointer" onclick="openLightbox('${url}','image')"><img src="${url}" alt=""/><span class="lib-seq" title="生成序号">#${n}</span></div></div>`; }
-        function videoResultHTML(url){ const n=nextGenSeq('video'); return `<div class="generated-videos"><div class="thumb-preview" style="position:relative"><video src="${url}" controls onclick="openLightbox('${url}','video')"></video><span class="lib-seq" title="生成序号">#${n}</span></div></div>`; }
+        function videoResultHTML(url, extraCls){ const n=nextGenSeq('video'); return `<div class="generated-videos${extraCls?(' '+extraCls):''}"><div class="thumb-preview" style="position:relative"><video src="${url}" controls playsinline onclick="openLightbox('${url}','video')"></video><span class="lib-seq" title="生成序号">#${n}</span></div></div>`; }
         /* ================= 顶部素材库（按功能分区 + 序号） ================= */
         const LIB_MODE_NAMES = { chat:'💬 对话', image:'🎨 文生图', edit:'✏️ 图生图', video_text:'🎬 文生视频', video_image:'📹 单图生视频', video_multi:'🎞️ 多图生视频', video_keyframe:'🎬 首尾帧生视频', film:'🎬 一键成片', drama:'🎬 短剧', canvas:'🕸️ 画布', other:'📦 其他' };
         const LIB_MODE_ORDER = ['image','edit','video_text','video_image','video_multi','video_keyframe','drama','film','canvas','chat','other'];
@@ -1900,7 +1924,7 @@ select { max-width: 100%; }
         function circleProgressHTML(indeterminate=false, label='…'){ return `<div class="circle-progress ${indeterminate?'indeterminate':''}"><svg viewBox="0 0 36 36"><path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee" stroke-width="3.5"/><path class="circle-fg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#4D6BFE" stroke-width="3.5" stroke-dasharray="5,100" stroke-linecap="round"/></svg><div class="circle-text">${escapeHtml(label)}</div></div>`; }
         function updateCircleProgressIn(container, percent, label){ if(!container) return; const fg=container.querySelector('.circle-fg'); const txt=container.querySelector('.circle-text'); if(fg) fg.setAttribute('stroke-dasharray', `${Math.max(0,Math.min(100,percent))}, 100`); if(txt) txt.textContent = (label!=null? label : Math.round(percent)+'%'); }
         function setCardCircle(cardId, indeterminate, label){ const card=document.getElementById(cardId); if(!card) return; let cp=card.querySelector('.circle-progress'); if(!cp){ const row=document.createElement('div'); row.className='task-running-row'; row.innerHTML=circleProgressHTML(indeterminate,label); card.appendChild(row); } else { cp.classList.toggle('indeterminate', !!indeterminate); if(label!=null){ const t=cp.querySelector('.circle-text'); if(t)t.textContent=label; } } }
-        async function llmChat(msgs, signal, useModel=null){ taskStart(); try{ const m = useModel || MODELS.chat[0].value; const r=await fetch(`${baseUrl}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,stream:false}),signal}); if(!r.ok) throw new Error(`LLM HTTP ${r.status}`); const d=await r.json(); return d.choices[0].message.content; } finally { taskEnd(); } }
+        async function llmChat(msgs, signal, useModel=null){ taskStart(); try{ const _d=(availableModels('chat')[0]||MODELS.chat[0]); const m = useModel || _d.value; const _b=activeBase(m), _k=activeKey(m); const r=await fetch(`${_b}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${_k}`,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,stream:false}),signal}); if(!r.ok) throw new Error(`LLM HTTP ${r.status}`); const d=await r.json(); return d.choices[0].message.content; } finally { taskEnd(); } }
         function pickSceneArray(obj) {
             if (Array.isArray(obj)) return obj;
             if (!obj || typeof obj !== 'object') return [];
@@ -2105,7 +2129,7 @@ select { max-width: 100%; }
             }
         }
 
-        async function sendChatRequest(content,signal,attsIdx,atts){ const _atts=atts||attachments; taskStart(); setProgress(10,'正在处理附件...'); let mc=[]; if(content) mc.push({type:"text",text:content}); const maxImg=getModelMaxImages(model); let imageCount=0; for(let i=0;i<_atts.length;i++){ const att=_atts[i]; setProgress(10+Math.round((i/Math.max(1,_atts.length))*30),`转换附件...`); try{ if(att.type.startsWith('image/')){ if(imageCount>=maxImg){ showToast(`对话模型 ${model} 最多处理 ${maxImg} 张图片，已忽略超出部分`,'warning'); continue; } imageCount++; mc.push({type:"image_url",image_url:{url:await processImageFast(att.file)}}); } else if(att.type.startsWith('text/')||['.txt','.md','.html','.csv','.json'].some(x=>att.name.toLowerCase().endsWith(x))){ const tc=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(att.file);}); mc.push({type:"text",text:`\n\n📄 ${att.name}:\n${tc.substring(0,4000)}`}); } }catch(e){} } addUserMessage(content,_atts,attsIdx); messages.push({role:'user',content:mc}); const aiDiv=document.createElement('div'); aiDiv.className='message ai'; aiDiv.innerHTML=`<div class="message-role">AI:</div><div class="message-bubble"></div>`; els.messages.appendChild(aiDiv); const bubble=aiDiv.querySelector('.message-bubble'); setProgress(50,'正在发送请求...'); const c=new AbortController(); const t=setTimeout(()=>c.abort(),90000); const onA=()=>c.abort(); signal.addEventListener('abort',onA); try{ const r=await fetch(`${baseUrl}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model:model,messages:messages,stream:true,max_tokens:2000}),signal:c.signal}); clearTimeout(t); if(!r.ok) throw new Error(`HTTP ${r.status}`); if(!r.body) throw new Error('不支持流式'); setProgress(80,'接收响应...'); const rd=r.body.getReader(); const dec=new TextDecoder(); let buf='',full='',last=0; while(true){ const{done,value}=await rd.read(); if(done)break; buf+=dec.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop(); for(const line of lines){ if(line.startsWith('data: ')){ const dt=line.slice(6); if(dt==='[DONE]')continue; try{const j=JSON.parse(dt); const dl=j.choices?.[0]?.delta?.content||''; if(dl){ full+=dl; const now=performance.now(); if(now-last>50){ bubble.innerHTML=formatContent(full)+'<span class="cursor">▍</span>'; scrollToBottom(); last=now; } } }catch(e){} } } } bubble.innerHTML=formatContent(full); messages.push({role:'assistant',content:full}); addCopyButton(aiDiv,bubble); setProgress(100,'完成!'); setTimeout(hideProgress,1000); }catch(e){ hideProgress(); aiDiv.remove(); if(signal.aborted) addAIMessage("⏹️ 已终止"); else addAIMessage(`⚠️ 错误: ${e.name==='AbortError'?'请求超时':e.message}`); } finally{ clearTimeout(t); signal.removeEventListener('abort',onA); taskEnd(); } }
+        async function sendChatRequest(content,signal,attsIdx,atts){ const _atts=atts||attachments; taskStart(); setProgress(10,'正在处理附件...'); let mc=[]; if(content) mc.push({type:"text",text:content}); const maxImg=getModelMaxImages(model); let imageCount=0; for(let i=0;i<_atts.length;i++){ const att=_atts[i]; setProgress(10+Math.round((i/Math.max(1,_atts.length))*30),`转换附件...`); try{ if(att.type.startsWith('image/')){ if(imageCount>=maxImg){ showToast(`对话模型 ${model} 最多处理 ${maxImg} 张图片，已忽略超出部分`,'warning'); continue; } imageCount++; mc.push({type:"image_url",image_url:{url:await processImageFast(att.file)}}); } else if(att.type.startsWith('text/')||['.txt','.md','.html','.csv','.json'].some(x=>att.name.toLowerCase().endsWith(x))){ const tc=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(att.file);}); mc.push({type:"text",text:`\n\n📄 ${att.name}:\n${tc.substring(0,4000)}`}); } }catch(e){} } addUserMessage(content,_atts,attsIdx); messages.push({role:'user',content:mc}); const aiDiv=document.createElement('div'); aiDiv.className='message ai'; aiDiv.innerHTML=`<div class="message-role">AI:</div><div class="message-bubble"></div>`; els.messages.appendChild(aiDiv); const bubble=aiDiv.querySelector('.message-bubble'); setProgress(50,'正在发送请求...'); const c=new AbortController(); const t=setTimeout(()=>c.abort(),90000); const onA=()=>c.abort(); signal.addEventListener('abort',onA); try{         const r=await fetch(`${activeBase(model)}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${activeKey(model)}`,'Content-Type':'application/json'},body:JSON.stringify({model:model,messages:messages,stream:true,max_tokens:2000}),signal:c.signal}); clearTimeout(t); if(!r.ok) throw new Error(`HTTP ${r.status}`); if(!r.body) throw new Error('不支持流式'); setProgress(80,'接收响应...'); const rd=r.body.getReader(); const dec=new TextDecoder(); let buf='',full='',last=0; while(true){ const{done,value}=await rd.read(); if(done)break; buf+=dec.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop(); for(const line of lines){ if(line.startsWith('data: ')){ const dt=line.slice(6); if(dt==='[DONE]')continue; try{const j=JSON.parse(dt); const dl=j.choices?.[0]?.delta?.content||''; if(dl){ full+=dl; const now=performance.now(); if(now-last>50){ bubble.innerHTML=formatContent(full)+'<span class="cursor">▍</span>'; scrollToBottom(); last=now; } } }catch(e){} } } } bubble.innerHTML=formatContent(full); messages.push({role:'assistant',content:full}); addCopyButton(aiDiv,bubble); setProgress(100,'完成!'); setTimeout(hideProgress,1000); }catch(e){ hideProgress(); aiDiv.remove(); if(signal.aborted) addAIMessage("⏹️ 已终止"); else addAIMessage(`⚠️ 错误: ${e.name==='AbortError'?'请求超时':e.message}`); } finally{ clearTimeout(t); signal.removeEventListener('abort',onA); taskEnd(); } }
         /* 统一构造生图请求体：分档模型走 size(tier)+ratio，其余走像素尺寸 */
         function buildImageRequestBody(fp, size, refs){
             const extra = { response_format: "url" };
@@ -2834,7 +2858,38 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
         let ttsRate = 0;
         let ttsPitch = 0;
         let ttsAudio = null;
-        if (window.speechSynthesis) { try { window.speechSynthesis.getVoices(); window.speechSynthesis.addEventListener('voiceschanged', function(){}); } catch(e){} }
+        let ttsSysVoiceName = '';
+        let ttsEdgeHinted = false;
+        function edgeTtsUaOk() { return /Edg\//.test(navigator.userAgent || ''); }
+        function ttsSystemVoices() { try { return (window.speechSynthesis && window.speechSynthesis.getVoices()) || []; } catch(e) { return []; } }
+        function ttsHashPick(list, key) {
+            if (!list.length) return null;
+            let h = 0; const s = String(key || 'x');
+            for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+            return list[h % list.length];
+        }
+        function refreshTtsSysSelect() {
+            const wrap = document.getElementById('ttsSysWrap');
+            const sel = document.getElementById('ttsSysVoice');
+            if (!wrap || !sel) return;
+            const vs = ttsSystemVoices();
+            if (!vs.length) { wrap.style.display = 'none'; return; }
+            wrap.style.display = 'block';
+            const cur = ttsSysVoiceName;
+            sel.innerHTML = '';
+            const zh = vs.filter(v => /^zh/i.test(v.lang || ''));
+            const list = zh.length ? zh : vs;
+            list.forEach(v => { const o = document.createElement('option'); o.value = v.name; o.textContent = v.name + ' (' + (v.lang || '') + ')'; sel.appendChild(o); });
+            if (cur && list.some(v => v.name === cur)) sel.value = cur;
+            else { const pick = list.find(v => /xiaoxiao|xiaoyi|yaoyao|huihui/i.test(v.name)) || list[0]; if (pick) { sel.value = pick.name; ttsSysVoiceName = pick.name; } }
+        }
+        function updateTtsEngineHint() {
+            const hint = document.getElementById('ttsEngineHint');
+            if (!hint) return;
+            if (edgeTtsUaOk()) hint.textContent = '当前引擎：Edge TTS（26 种音色）· ' + (ttsVoice || '');
+            else hint.textContent = '当前浏览器不支持 Edge TTS，已自动改用系统语音；需要 26 种音色请用 Edge 浏览器或手机 App。';
+        }
+        if (window.speechSynthesis) { try { window.speechSynthesis.getVoices(); window.speechSynthesis.addEventListener('voiceschanged', function(){ refreshTtsSysSelect(); updateTtsEngineHint(); }); } catch(e){} }
 
         async function secMsGec() {
             let t = (Date.now() / 1000) + 11644473600;
@@ -2961,7 +3016,8 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     v = voices.find(function(x) { return String(x.name).toLowerCase().indexOf(c) >= 0; }) || null;
                 }
                 if (!v) v = voices.find(function(x) { return String(x.lang).toLowerCase().replace('_', '-').indexOf(lang) === 0; }) || null;
-                if (!v) v = voices.find(function(x) { return /^zh/i.test(x.lang); }) || null;
+                if (!v && ttsSysVoiceName) v = voices.find(function(x) { return x.name === ttsSysVoiceName; }) || null;
+                if (!v) { const zh2 = voices.filter(function(x) { return /^zh/i.test(x.lang || ''); }); v = ttsHashPick(zh2.length ? zh2 : voices, raw || name); }
                 if (v) u.voice = v;
                 u.lang = (v && v.lang) || 'zh-CN';
                 u.rate = Math.max(0.1, Math.min(2, 1 + (rate || 0) / 100));
@@ -2988,6 +3044,10 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 try {
                     await localTtsSpeak(text, v, r, p);
                     stopTts();
+                    if (!ttsEdgeHinted) {
+                        ttsEdgeHinted = true;
+                        try { showToast('当前浏览器不支持 Edge TTS，已用系统语音朗读。要 26 种音色请用 Edge 浏览器或手机 App。', 'warning'); } catch(e2) {}
+                    }
                 } catch (le) {
                     showToast('语音播放失败: ' + (le.message || e.message), 'error');
                     if (btn) { btn.textContent = btn.dataset.ttsLabel || '🔊 朗读'; btn.classList.remove('tts-playing'); }
@@ -3018,6 +3078,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (cfg.tts_voice) ttsVoice = cfg.tts_voice;
                 if (cfg.tts_rate != null) ttsRate = parseInt(cfg.tts_rate, 10) || 0;
                 if (cfg.tts_pitch != null) ttsPitch = parseInt(cfg.tts_pitch, 10) || 0;
+                if (cfg.tts_sys_voice) ttsSysVoiceName = cfg.tts_sys_voice;
             } catch(e){}
             const voiceEl = document.getElementById('ttsVoice');
             const rateEl = document.getElementById('ttsRate');
@@ -3025,6 +3086,12 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
             if (voiceEl) voiceEl.value = ttsVoice;
             const fsv = document.getElementById('filmTtsVoice');
             if (fsv && voiceEl) { if (!fsv.options.length) fsv.innerHTML = voiceEl.innerHTML; fsv.value = ttsVoice; }
+            const sysSel = document.getElementById('ttsSysVoice');
+            if (sysSel) {
+                refreshTtsSysSelect();
+                if (ttsSysVoiceName) { const opt = [...sysSel.options].find(o => o.value === ttsSysVoiceName); if (opt) sysSel.value = ttsSysVoiceName; }
+            }
+            updateTtsEngineHint();
             if (rateEl) { rateEl.value = ttsRate; const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = ttsRate; }
             if (pitchEl) { pitchEl.value = ttsPitch; const pv = document.getElementById('ttsPitchValue'); if (pv) pv.textContent = ttsPitch; }
         }
@@ -3040,6 +3107,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 cfg.tts_voice = ttsVoice;
                 cfg.tts_rate = ttsRate;
                 cfg.tts_pitch = ttsPitch;
+                if (ttsSysVoiceName) cfg.tts_sys_voice = ttsSysVoiceName;
                 localStorage.setItem('agnes_config', JSON.stringify(cfg));
             } catch(e){}
         }
@@ -3102,7 +3170,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                         if (!b) continue;
                         const url = URL.createObjectURL(b);
                         const scriptHtml = (item.script && item.script.length) ? ('<div class="film-script">🎙 ' + item.script.map(function(t, n){ return (n + 1) + '. ' + escapeHtml(t); }).join('<br>') + '</div>') : '';
-                        appendResultFor(null, videoResultHTML(url) + '<div class="film-actions"><span class="film-meta">📁 历史成片 · ' + Math.round(item.secs || 0) + '秒</span></div>' + scriptHtml);
+                        appendResultFor(null, videoResultHTML(url, 'film-item') + '<div class="film-actions"><span class="film-meta">📁 历史成片 · ' + Math.round(item.secs || 0) + '秒</span></div>' + scriptHtml);
                     } catch(e) {}
                 }
                 for (let i = 0; i < media.length; i++) {
@@ -3160,6 +3228,15 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            const providerSel = document.getElementById('providerSelect');
+            if (providerSel) providerSel.addEventListener('change', function() {
+                provider = providerSel.value === 'sv' ? 'sv' : 'agnes';
+                applyProviderUI();
+                const list = availableModels(currentMode);
+                if (list.length) { model = list[0].value; }
+                updateModelOptions();
+                try { showToast(provider === 'sv' ? '已切换到商汤 SenseNova' : '已切换到 Agnes', 'success'); } catch(e) {}
+            });
             const rateEl = document.getElementById('ttsRate');
             const pitchEl = document.getElementById('ttsPitch');
             if (rateEl) rateEl.addEventListener('input', () => { const rv = document.getElementById('ttsRateValue'); if (rv) rv.textContent = rateEl.value; });
@@ -3181,10 +3258,13 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 if (fv2) fv2.value = ttsVoice;
                 saveTtsConfig();
                 const opt = voiceSelEl.options[voiceSelEl.selectedIndex];
+                updateTtsEngineHint();
                 try { showToast('音色已切换：' + (opt ? opt.text : ttsVoice), 'success'); } catch(e) {}
             });
             if (rateEl) rateEl.addEventListener('change', function() { ttsRate = parseInt(rateEl.value, 10) || 0; saveTtsConfig(); });
             if (pitchEl) pitchEl.addEventListener('change', function() { ttsPitch = parseInt(pitchEl.value, 10) || 0; saveTtsConfig(); });
+            const sysVoiceEl = document.getElementById('ttsSysVoice');
+            if (sysVoiceEl) sysVoiceEl.addEventListener('change', function() { ttsSysVoiceName = sysVoiceEl.value; saveTtsConfig(); try { showToast('系统音色：' + ttsSysVoiceName, 'success'); } catch(e) {} });
             if (pvBtn) pvBtn.addEventListener('click', () => {
                 if (pvBtn.classList.contains('tts-playing')) { stopTts(); return; }
                 const v = (document.getElementById('ttsVoice') || {}).value || ttsVoice;
@@ -3658,7 +3738,7 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     '<span class="film-meta">' + W + '×' + H + ' · ' + totalSec.toFixed(1) + '秒 · ' + sizeMB + 'MB · ' + scenes.length + ' 镜</span></div>' +
                     '<div class="film-script">🎙 ' + scenes.map(function(s, i){ return (i + 1) + '. ' + s.narration; }).join('<br>') + '</div>';
                 pgSucceedFor(ctx);
-                appendResultFor(ctx, videoResultHTML(url) + dl);
+                appendResultFor(ctx, videoResultHTML(url, 'film-item') + dl);
                 showToast('成片已生成', 'success');
             } catch(e) {
                 pgFailFor(ctx);
