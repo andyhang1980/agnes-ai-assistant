@@ -1892,6 +1892,22 @@ select { max-width: 100%; }
         function updateCircleProgressIn(container, percent, label){ if(!container) return; const fg=container.querySelector('.circle-fg'); const txt=container.querySelector('.circle-text'); if(fg) fg.setAttribute('stroke-dasharray', `${Math.max(0,Math.min(100,percent))}, 100`); if(txt) txt.textContent = (label!=null? label : Math.round(percent)+'%'); }
         function setCardCircle(cardId, indeterminate, label){ const card=document.getElementById(cardId); if(!card) return; let cp=card.querySelector('.circle-progress'); if(!cp){ const row=document.createElement('div'); row.className='task-running-row'; row.innerHTML=circleProgressHTML(indeterminate,label); card.appendChild(row); } else { cp.classList.toggle('indeterminate', !!indeterminate); if(label!=null){ const t=cp.querySelector('.circle-text'); if(t)t.textContent=label; } } }
         async function llmChat(msgs, signal, useModel=null){ taskStart(); try{ const m = useModel || MODELS.chat[0].value; const r=await fetch(`${baseUrl}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,stream:false}),signal}); if(!r.ok) throw new Error(`LLM HTTP ${r.status}`); const d=await r.json(); return d.choices[0].message.content; } finally { taskEnd(); } }
+        function pickSceneArray(obj) {
+            if (Array.isArray(obj)) return obj;
+            if (!obj || typeof obj !== 'object') return [];
+            if (obj.data && typeof obj.data === 'object' && !Array.isArray(obj.data)) {
+                const inner = pickSceneArray(obj.data);
+                if (inner.length) return inner;
+            }
+            const keys = ['scenes','shots','list','data','result','results','items','storyboard','storyboards','scripts','clips','videos','content'];
+            for (let i = 0; i < keys.length; i++) { const v = obj[keys[i]]; if (Array.isArray(v) && v.length) return v; }
+            const ks = Object.keys(obj);
+            for (let i = 0; i < ks.length; i++) {
+                const v = obj[ks[i]];
+                if (Array.isArray(v) && v.length && v.some(function(x){ return x && typeof x === 'object' && (x.narration || x.keyword || x.sub || x.shot || x.scene || x.title || x.description); })) return v;
+            }
+            return [];
+        }
         function extractJSON(text){
             if(typeof text!=='string'||!text.trim())return null;
             const pick=function(src){
@@ -2180,10 +2196,12 @@ select { max-width: 100%; }
                 let sysPrompt2 = `将以下剧本拆分为连贯的分镜头。整体视觉风格：${getDramaStyleText()}。总时长${cfg.totalDuration}秒，每个分镜${cfg.shotDuration}秒。必须输出characters数组(name/appearance/costume/voice)和shots数组。每个分镜标注：shot/characters/scene/action/camera/line/voice/scene_image_prompt/first_frame_prompt/last_frame_prompt/video_transition_prompt。scene、action、camera及4个prompt字段必须纯英文无格式符号。line保持中文。scene_image_prompt严禁出现人物。first/last_frame_prompt纯静态。仅输出JSON。`;
                 if (hasCustom) { sysPrompt2 += `\n【重要】用户提供了角色参考图，characters中对应角色的appearance和costume写"As reference image"即可，不要编造。`; }
                 const jt=await llmChat([{role:'system',content:sysPrompt2},{role:'user',content:dramaState.script}],signal,getDramaTextModel());
-                const obj=extractJSON(jt);
-                if(!obj||!obj.shots||!obj.shots.length) throw new Error('分镜解析失败');
-                const chars=(obj.characters||[]).map(c=>({...c, appearance: hasCustom ? (c.appearance || 'As reference image') : (cleanAppearance(c.appearance)||c.appearance||''), costume: hasCustom ? (c.costume || 'As reference image') : (unifyCostume(c.costume)||c.costume||''), voice: c.voice||'' }));
-                dramaState.characters=chars; dramaState.shots=normalizeShots(obj.shots, chars); dramaState.characterPrompts={}; dramaState.characters.forEach(c=>{ dramaState.characterPrompts[c.name]=buildCharPrompt(c); }); rebuildShotPrompts();
+                 const obj=extractJSON(jt);
+                 const root=(obj&&obj.data&&typeof obj.data==='object'&&!Array.isArray(obj.data))?Object.assign({},obj.data,obj):(obj||{});
+                 const shotArr=pickSceneArray(root);
+                 if(!shotArr.length) throw new Error('分镜解析失败');
+                 const chars=(root.characters||[]).map(c=>({...c, appearance: hasCustom ? (c.appearance || 'As reference image') : (cleanAppearance(c.appearance)||c.appearance||''), costume: hasCustom ? (c.costume || 'As reference image') : (unifyCostume(c.costume)||c.costume||''), voice: c.voice||'' }));
+                 dramaState.characters=chars; dramaState.shots=normalizeShots(shotArr, chars); dramaState.characterPrompts={}; dramaState.characters.forEach(c=>{ dramaState.characterPrompts[c.name]=buildCharPrompt(c); }); rebuildShotPrompts();
                 setProgress(100,'分镜头已拆分'); setTimeout(hideProgress, 1000); renderDramaStep2();
             }catch(e){ hideProgress(); if(signal&&signal.aborted) addAIMessage("⏹️ 已终止"); else renderDramaStep('step2','🎬 第2步：连贯分镜头',`<div class="fail-text">⚠️ 分镜拆分失败: ${e.message}</div>`,[{label:'🔄 重试', primary:true, danger:true, onClick:()=>runDramaStage((sig)=>dramaStep2(sig,true))},{label:'✏️ 编辑分镜', onClick:()=>editDramaShots()}]); }
         }
@@ -3491,8 +3509,8 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                     { role: 'user', content: '主题：' + topic.slice(0, 1500) + '\n\n请输出 ' + nScene + ' 个分镜，旁白连起来是一篇完整的口播稿，不要出现序号。' }
                 ], signal, model);
                 const parsed = extractJSON(sbTxt);
-                let scenes = Array.isArray(parsed) ? parsed : (parsed && (parsed.scenes || parsed.shots || parsed.list)) || [];
-                scenes = scenes.filter(function(s){ return s && (s.narration || s.keyword || s.sub); }).slice(0, nScene);
+                let scenes = pickSceneArray(parsed);
+                scenes = scenes.filter(function(s){ return s && typeof s === 'object' && (s.narration || s.keyword || s.sub); }).slice(0, nScene);
                 if (!scenes.length) throw new Error('分镜生成失败：模型没有返回有效 JSON。返回开头：' + String(sbTxt || '').replace(/\s+/g, ' ').slice(0, 160));
                 scenes = scenes.map(function(s, i){
                     return { narration: String(s.narration || s.sub || s.keyword || '').trim(), keyword: String(s.keyword || s.narration || 'scene').trim(), sub: String(s.sub || s.narration || '').trim(), index: i };
