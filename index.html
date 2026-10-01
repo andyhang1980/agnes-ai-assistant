@@ -723,17 +723,6 @@ select { max-width: 100%; }
   .message-bubble { max-width: 96%; }
 }
 
-@media (max-width: 768px) {
-  body { --hdr-icon: clamp(22px, 7.2vw, 30px); --hdr-icon-fs: clamp(13px, 4.2vw, 16px); --hdr-icon-r: clamp(8px, 2.6vw, 10px); --hdr-title: clamp(12px, 3.7vw, 15px); --hdr-gap: clamp(6px, 2.2vw, 8px); --hdr-sep: clamp(8px, 3vw, 14px); --hdr-pad: clamp(6px, 2.4vw, 8px) clamp(8px, 3vw, 12px); --hdr-badge-fs: clamp(10px, 3vw, 12px); --hdr-badge-p: clamp(3px, 1.1vw, 4px) clamp(5px, 1.9vw, 8px); --hdr-btn-fs: clamp(11px, 3.1vw, 13px); --hdr-btn-p: clamp(5px, 1.6vw, 6px) clamp(6px, 2.4vw, 10px); --hdr-count-fs: clamp(9px, 2.6vw, 11px); --inp-fs: clamp(11px, 3.1vw, 13px); --inp-lbl: clamp(10px, 2.9vw, 12px); --inp-gap: clamp(5px, 1.8vw, 8px); --inp-pad: clamp(4px, 1.4vw, 6px) clamp(6px, 2vw, 10px); }
-  .header { padding: var(--hdr-pad); gap: var(--hdr-gap); flex-wrap: nowrap; overflow: hidden; }
-  .logo-area { display: flex; align-items: center; gap: clamp(6px, 2vw, 8px); flex: 0 0 auto; min-width: 0px; overflow: hidden; }
-  .logo { display: flex; width: var(--hdr-icon); height: var(--hdr-icon); min-width: var(--hdr-icon); max-width: var(--hdr-icon); font-size: var(--hdr-icon-fs); border-radius: var(--hdr-icon-r); flex: 0 0 auto; }
-  .title { display: none; }
-  .title p { display: none; }
-  .header-right { flex: 1 1 auto; min-width: 0px; margin-left: auto; padding-left: var(--hdr-sep); gap: var(--hdr-gap); justify-content: flex-end; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .header-right::-webkit-scrollbar { display: none; }
-.header-right > * { flex: 0 0 auto; }
-
 /* ===== 顶栏下拉（主题 / 语音）===== */
 .hdr-pop-wrap { position: relative; flex: 0 0 auto; }
 /* ===== 顶栏下拉：紧凑设置行（图标标签左 + 下拉右）===== */
@@ -753,6 +742,17 @@ select { max-width: 100%; }
 .hdr-pop.set-style .form-group select:focus { border-color: var(--ink-accent); box-shadow: 0 0 0 2px var(--ink-accent-soft, rgba(77,107,254,.25)); }
 .hdr-pop .ink-switcher { display: none !important; }
 .btn-settings.pop-open { background: var(--ink-accent-soft); color: var(--ink-accent); }
+
+@media (max-width: 768px) {
+  body { --hdr-icon: clamp(22px, 7.2vw, 30px); --hdr-icon-fs: clamp(13px, 4.2vw, 16px); --hdr-icon-r: clamp(8px, 2.6vw, 10px); --hdr-title: clamp(12px, 3.7vw, 15px); --hdr-gap: clamp(6px, 2.2vw, 8px); --hdr-sep: clamp(8px, 3vw, 14px); --hdr-pad: clamp(6px, 2.4vw, 8px) clamp(8px, 3vw, 12px); --hdr-badge-fs: clamp(10px, 3vw, 12px); --hdr-badge-p: clamp(3px, 1.1vw, 4px) clamp(5px, 1.9vw, 8px); --hdr-btn-fs: clamp(11px, 3.1vw, 13px); --hdr-btn-p: clamp(5px, 1.6vw, 6px) clamp(6px, 2.4vw, 10px); --hdr-count-fs: clamp(9px, 2.6vw, 11px); --inp-fs: clamp(11px, 3.1vw, 13px); --inp-lbl: clamp(10px, 2.9vw, 12px); --inp-gap: clamp(5px, 1.8vw, 8px); --inp-pad: clamp(4px, 1.4vw, 6px) clamp(6px, 2vw, 10px); }
+  .header { padding: var(--hdr-pad); gap: var(--hdr-gap); flex-wrap: nowrap; overflow: hidden; }
+  .logo-area { display: flex; align-items: center; gap: clamp(6px, 2vw, 8px); flex: 0 0 auto; min-width: 0px; overflow: hidden; }
+  .logo { display: flex; width: var(--hdr-icon); height: var(--hdr-icon); min-width: var(--hdr-icon); max-width: var(--hdr-icon); font-size: var(--hdr-icon-fs); border-radius: var(--hdr-icon-r); flex: 0 0 auto; }
+  .title { display: none; }
+  .title p { display: none; }
+  .header-right { flex: 1 1 auto; min-width: 0px; margin-left: auto; padding-left: var(--hdr-sep); gap: var(--hdr-gap); justify-content: flex-end; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .header-right::-webkit-scrollbar { display: none; }
+.header-right > * { flex: 0 0 auto; }
 
   .key-pool-badge, .task-counter, .connection-badge { white-space: nowrap; }
   .lib-btn, .btn-settings { white-space: nowrap; }
