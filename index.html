@@ -3209,11 +3209,15 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 setBtn('voiceBtn', !!(except && except.id === 'voicePop'));
             }
             function posPop(btn, pop){
+                if (pop.parentNode !== document.body) document.body.appendChild(pop);
                 const r = btn.getBoundingClientRect();
-                pop.style.top = (r.bottom + 8) + 'px';
+                const vw = window.innerWidth, vh = window.innerHeight;
                 const w = pop.offsetWidth || 252;
+                pop.style.maxHeight = Math.max(200, vh - Math.round(r.bottom) - 24) + 'px';
+                pop.style.overflowY = 'auto';
+                pop.style.webkitOverflowScrolling = 'touch';
+                pop.style.top = (r.bottom + 8) + 'px';
                 let l = r.right - w;
-                const vw = window.innerWidth;
                 if (l < 8) l = 8;
                 if (l + w > vw - 8) l = Math.max(8, vw - 8 - w);
                 pop.style.left = l + 'px';
@@ -3231,10 +3235,11 @@ setupApiKeyUI();loadApiKeyPool();setupParallelModeUI();
                 const t = e.target && e.target.closest ? e.target.closest('button, a') : null;
                 if (t && t.id === 'themeBtn') { togglePop('themeBtn', 'themePop'); return; }
                 if (t && t.id === 'voiceBtn') { togglePop('voiceBtn', 'voicePop'); return; }
-                if (!e.target || !e.target.closest || !e.target.closest('.hdr-pop-wrap')) closePops(null);
+                if (!e.target || !e.target.closest || (!e.target.closest('.hdr-pop-wrap') && !e.target.closest('.hdr-pop'))) closePops(null);
             });
             document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closePops(null); });
             window.addEventListener('resize', function(){ closePops(null); });
+            window.addEventListener('scroll', function(){ if (window.scrollY > 0) closePops(null); }, { passive: true });
         })();
 
         /* ================= 素材库：Pexels / Pixabay 免费 API ================= */
