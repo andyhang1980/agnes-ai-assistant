@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
+        <item name="android:statusBarColor">#F7F4EC</item>
+        <item name="android:navigationBarColor">#F7F4EC</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorAccent">#4A4034</item>
+    </style>
+</resources>

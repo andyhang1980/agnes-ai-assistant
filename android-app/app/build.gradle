@@ -1,0 +1,53 @@
+plugins {
+    id 'com.android.application'
+}
+
+// 签名配置从 keystore.properties 读取（该文件与 .keystore 均不提交到 Git）
+def ksPropsFile = rootProject.file("keystore.properties")
+def ksProps = new Properties()
+if (ksPropsFile.exists()) {
+    ksPropsFile.withInputStream { ksProps.load(it) }
+}
+
+android {
+    namespace 'com.freekit.toolbox'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.freekit.toolbox"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    signingConfigs {
+        release {
+            def storePath = ksProps.getProperty("storeFile", "../keystore/toolbox.keystore")
+            def storePass = ksProps.getProperty("storePassword", System.getenv("KS_STORE_PASSWORD") ?: "")
+            def keyAliasName = ksProps.getProperty("keyAlias", "toolbox")
+            def keyPass = ksProps.getProperty("keyPassword", System.getenv("KS_KEY_PASSWORD") ?: storePass)
+            if (storePass) {
+                storeFile file(storePath)
+                storePassword storePass
+                keyAlias keyAliasName
+                keyPassword keyPass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
